@@ -1,0 +1,7 @@
+vendor/
+.env
+.env.local
+.DS_Store
+*.log
+composer.phar
+composer.lock
