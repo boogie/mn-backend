@@ -56,7 +56,19 @@ class Subscription {
             'client_reference_id' => (string)$userId,
             'metadata' => [
                 'user_id' => $userId
-            ]
+            ],
+            // Enable automatic tax calculation
+            'automatic_tax' => [
+                'enabled' => true
+            ],
+            // Collect tax IDs (VAT numbers for EU B2B)
+            'tax_id_collection' => [
+                'enabled' => true
+            ],
+            // Collect billing address for invoicing
+            'billing_address_collection' => 'required',
+            // Allow promotional codes
+            'allow_promotion_codes' => true
         ]);
 
         return $session->url;
@@ -101,6 +113,19 @@ class Subscription {
     private function handleCheckoutCompleted($session): void {
         $userId = (int)$session->client_reference_id;
         $subscriptionId = $session->subscription;
+
+        // Store billing address from checkout session
+        if ($session->customer_details) {
+            $this->storeBillingData($userId, $session);
+        }
+
+        // Store Stripe customer ID
+        if ($session->customer) {
+            $this->db->query(
+                "UPDATE users SET stripe_customer_id = ? WHERE id = ?",
+                [$session->customer, $userId]
+            );
+        }
 
         // Get subscription details
         $subscription = StripeSubscription::retrieve($subscriptionId);
@@ -171,6 +196,9 @@ class Subscription {
         if ($invoice->subscription) {
             $subscription = StripeSubscription::retrieve($invoice->subscription);
             $this->handleSubscriptionUpdate($subscription);
+
+            // Create Billingo invoice for this payment
+            $this->createBillingoInvoice($invoice);
         }
     }
 
@@ -188,5 +216,146 @@ class Subscription {
             "UPDATE users SET subscription_status = ?, subscription_end_date = ? WHERE id = ?",
             [$status, $endDate, $userId]
         );
+    }
+
+    /**
+     * Store billing data from Stripe checkout session
+     */
+    private function storeBillingData(int $userId, $session): void {
+        $details = $session->customer_details;
+        $address = $details->address ?? null;
+        $taxIds = $details->tax_ids ?? [];
+
+        $vatNumber = null;
+        foreach ($taxIds as $taxId) {
+            if ($taxId->type === 'eu_vat') {
+                $vatNumber = $taxId->value;
+                break;
+            }
+        }
+
+        $this->db->query(
+            "UPDATE users SET
+             billing_name = ?,
+             billing_country = ?,
+             billing_postal_code = ?,
+             billing_city = ?,
+             billing_line1 = ?,
+             vat_number = ?,
+             company_name = ?
+             WHERE id = ?",
+            [
+                $details->name ?? '',
+                $address->country ?? '',
+                $address->postal_code ?? '',
+                $address->city ?? '',
+                $address->line1 ?? '',
+                $vatNumber,
+                $details->name ?? '', // Use name as company name if available
+                $userId
+            ]
+        );
+    }
+
+    /**
+     * Create Billingo invoice for Stripe payment
+     */
+    private function createBillingoInvoice($stripeInvoice): void {
+        try {
+            // Get user ID from subscription
+            $sub = $this->db->fetchOne(
+                "SELECT user_id FROM subscriptions WHERE stripe_subscription_id = ?",
+                [$stripeInvoice->subscription]
+            );
+
+            if (!$sub) {
+                throw new \Exception("Subscription not found for invoice");
+            }
+
+            $userId = $sub['user_id'];
+
+            // Check if invoice already created
+            $existing = $this->db->fetchOne(
+                "SELECT id FROM invoices WHERE stripe_invoice_id = ?",
+                [$stripeInvoice->id]
+            );
+
+            if ($existing) {
+                return; // Already created
+            }
+
+            // Get user billing data
+            $user = $this->db->fetchOne(
+                "SELECT * FROM users WHERE id = ?",
+                [$userId]
+            );
+
+            if (!$user) {
+                throw new \Exception("User not found");
+            }
+
+            // Prepare customer data for Billingo
+            $customer = [
+                'name' => $user['billing_name'] ?: $user['email'],
+                'email' => $user['email'],
+                'country' => $user['billing_country'] ?: 'HU',
+                'postal_code' => $user['billing_postal_code'] ?: '',
+                'city' => $user['billing_city'] ?: '',
+                'line1' => $user['billing_line1'] ?: '',
+                'vat_number' => $user['vat_number'] ?: ''
+            ];
+
+            // Calculate amounts (Stripe amounts are in cents)
+            $totalAmount = $stripeInvoice->total / 100;
+            $taxAmount = $stripeInvoice->tax / 100;
+            $currency = strtoupper($stripeInvoice->currency);
+
+            // Create Billingo client and invoice
+            $billingo = new BillingoClient();
+            $invoiceData = $billingo->buildSubscriptionInvoice(
+                $customer,
+                $totalAmount,
+                $taxAmount,
+                $currency,
+                $stripeInvoice->id
+            );
+
+            $billingoResponse = $billingo->createInvoice($invoiceData);
+
+            // Store invoice record
+            $this->db->query(
+                "INSERT INTO invoices (user_id, stripe_invoice_id, billingo_invoice_id, amount, tax_amount, currency, status)
+                 VALUES (?, ?, ?, ?, ?, ?, ?)",
+                [
+                    $userId,
+                    $stripeInvoice->id,
+                    $billingoResponse['id'] ?? null,
+                    $totalAmount,
+                    $taxAmount,
+                    $currency,
+                    'completed'
+                ]
+            );
+
+        } catch (\Exception $e) {
+            // Log error but don't fail the payment
+            \error_log("Billingo invoice creation failed: " . $e->getMessage());
+
+            // Store failed invoice attempt
+            if (isset($userId) && isset($stripeInvoice)) {
+                $this->db->query(
+                    "INSERT INTO invoices (user_id, stripe_invoice_id, amount, tax_amount, currency, status)
+                     VALUES (?, ?, ?, ?, ?, ?)",
+                    [
+                        $userId ?? 0,
+                        $stripeInvoice->id,
+                        ($stripeInvoice->total ?? 0) / 100,
+                        ($stripeInvoice->tax ?? 0) / 100,
+                        strtoupper($stripeInvoice->currency ?? 'EUR'),
+                        'failed'
+                    ]
+                );
+            }
+        }
     }
 }

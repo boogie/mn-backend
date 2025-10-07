@@ -43,8 +43,31 @@ class Database {
                 subscription_end_date TEXT,
                 stripe_customer_id TEXT,
                 stripe_subscription_id TEXT,
+                billing_name TEXT,
+                billing_country TEXT,
+                billing_postal_code TEXT,
+                billing_city TEXT,
+                billing_line1 TEXT,
+                vat_number TEXT,
+                company_name TEXT,
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                 updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            )
+        ");
+
+        // Create invoices table for Billingo references
+        $this->connection->exec("
+            CREATE TABLE IF NOT EXISTS invoices (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
+                stripe_invoice_id TEXT NOT NULL,
+                billingo_invoice_id TEXT,
+                amount REAL NOT NULL,
+                tax_amount REAL NOT NULL,
+                currency TEXT NOT NULL,
+                status TEXT DEFAULT 'pending',
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (user_id) REFERENCES users(id)
             )
         ");
 

@@ -45,6 +45,12 @@ jobs:
         STRIPE_WEBHOOK_SECRET=${{ secrets.STRIPE_WEBHOOK_SECRET }}
         STRIPE_PRICE_ID=${{ secrets.STRIPE_PRICE_ID }}
 
+        # Billingo
+        BILLINGO_API_KEY=${{ secrets.BILLINGO_API_KEY }}
+        BILLINGO_VENDOR_ID=${{ secrets.BILLINGO_VENDOR_ID }}
+        BILLINGO_BLOCK_ID=${{ secrets.BILLINGO_BLOCK_ID }}
+        BILLINGO_BANK_ACCOUNT_ID=${{ secrets.BILLINGO_BANK_ACCOUNT_ID }}
+
         # App
         APP_URL=${{ secrets.APP_URL }}
         CORS_ORIGIN=${{ secrets.CORS_ORIGIN }}
