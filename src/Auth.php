@@ -43,14 +43,23 @@ class Auth {
 
         $userId = $this->db->getConnection()->lastInsertId();
 
+        // Fetch the created user
+        $user = $this->db->fetchOne(
+            "SELECT id, email, name, subscription_status, subscription_end_date, created_at FROM users WHERE id = ?",
+            [$userId]
+        );
+
         // Generate token
         $token = $this->generateToken($userId, $email);
 
         return [
             'user' => [
-                'id' => $userId,
-                'email' => $email,
-                'subscription_status' => 'free'
+                'id' => $user['id'],
+                'email' => $user['email'],
+                'name' => $user['name'],
+                'subscription_status' => $user['subscription_status'],
+                'subscription_end_date' => $user['subscription_end_date'],
+                'created_at' => $user['created_at']
             ],
             'token' => $token
         ];
@@ -58,7 +67,7 @@ class Auth {
 
     public function login(string $email, string $password): array {
         $user = $this->db->fetchOne(
-            "SELECT id, email, password_hash, subscription_status, subscription_end_date
+            "SELECT id, email, name, password_hash, subscription_status, subscription_end_date, created_at
              FROM users WHERE email = ?",
             [$email]
         );
@@ -78,8 +87,10 @@ class Auth {
             'user' => [
                 'id' => $user['id'],
                 'email' => $user['email'],
+                'name' => $user['name'],
                 'subscription_status' => $user['subscription_status'],
-                'subscription_end_date' => $user['subscription_end_date']
+                'subscription_end_date' => $user['subscription_end_date'],
+                'created_at' => $user['created_at']
             ],
             'token' => $token
         ];
@@ -106,7 +117,7 @@ class Auth {
             $decoded = $this->verifyToken($token);
 
             $user = $this->db->fetchOne(
-                "SELECT id, email, subscription_status, subscription_end_date, created_at
+                "SELECT id, email, name, subscription_status, subscription_end_date, created_at
                  FROM users WHERE id = ?",
                 [$decoded['user_id']]
             );
@@ -115,11 +126,14 @@ class Auth {
                 return null;
             }
 
-            unset($user['password_hash']);
             return $user;
         } catch (\Exception $e) {
             return null;
         }
+    }
+
+    public function getUserFromToken(string $token): ?array {
+        return $this->getCurrentUser($token);
     }
 
     private function generateToken(int $userId, string $email): string {
