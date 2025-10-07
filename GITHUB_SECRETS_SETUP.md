@@ -13,7 +13,7 @@ Go to your GitHub repository → Settings → Secrets and variables → Actions 
 FTP_SERVER = ftp.yourdomain.com
 FTP_USERNAME = your_ftp_username
 FTP_PASSWORD = your_ftp_password
-FTP_SERVER_DIR = /public_html/api  (or wherever your backend should be)
+FTP_SERVER_DIR = /www/magicians.news/api/
 ```
 
 ### Database Configuration
@@ -49,7 +49,7 @@ STRIPE_PRICE_ID = price_xxx  (from Stripe product pricing)
 
 ### App Configuration
 ```
-APP_URL = https://magicians.news
+APP_URL = https://api.magicians.news
 CORS_ORIGIN = https://magicians.news
 ```
 
@@ -62,16 +62,12 @@ CORS_ORIGIN = https://magicians.news
 FTP_SERVER = ftp.yourdomain.com
 FTP_USERNAME = your_ftp_username
 FTP_PASSWORD = your_ftp_password
-FTP_SERVER_DIR = /public_html  (root of your website)
+FTP_SERVER_DIR = /www/magicians.news/static/
 ```
 
 ### API Configuration
 ```
 VITE_API_URL = https://api.magicians.news/api
-```
-Or if backend is in subdirectory:
-```
-VITE_API_URL = https://magicians.news/api/api
 ```
 
 ### Stripe Configuration
@@ -142,24 +138,32 @@ After adding secrets, you can test by:
 
 ## File Structure on FTP Server
 
-### Recommended Structure:
+### Directory Structure:
 ```
-/public_html/
-├── index.html           # Frontend (from mn-frontend/dist/)
-├── assets/              # Frontend assets
-├── api/                 # Backend (from mn-backend/)
-│   ├── public/
-│   │   ├── index.php
-│   │   ├── .htaccess
-│   │   └── api/
-│   ├── src/
-│   ├── vendor/
-│   ├── composer.json
-│   └── .env
-└── .htaccess            # Root .htaccess for routing
+/www/magicians.news/
+├── static/              # Frontend (magicians.news)
+│   ├── index.html
+│   ├── assets/
+│   └── .htaccess        # React Router support
+└── api/                 # Backend (api.magicians.news)
+    ├── .env             # Environment variables (NOT web accessible)
+    ├── public/          # Web server document root for api.magicians.news
+    │   ├── index.php
+    │   └── api/         # API endpoints
+    ├── src/
+    ├── vendor/
+    └── composer.json
 ```
 
-### Root .htaccess (if needed for React Router):
+### Web Server Configuration:
+Configure your web server virtual hosts:
+- `magicians.news` → Document root: `/www/magicians.news/static/`
+- `api.magicians.news` → Document root: `/www/magicians.news/api/public/`
+
+This ensures `.env` files are **outside** the web-accessible directory.
+
+### Frontend .htaccess (for React Router):
+Place in `/www/magicians.news/static/.htaccess`:
 ```apache
 <IfModule mod_rewrite.c>
   RewriteEngine On
@@ -168,9 +172,6 @@ After adding secrets, you can test by:
   # Don't rewrite files or directories
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
-
-  # Don't rewrite API calls
-  RewriteCond %{REQUEST_URI} !^/api
 
   # Rewrite everything else to index.html
   RewriteRule ^ index.html [L]
