@@ -71,6 +71,27 @@ class Database {
             )
         ");
 
+        // Create comments table for article discussions
+        $this->connection->exec("
+            CREATE TABLE IF NOT EXISTS comments (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                article_id TEXT NOT NULL,
+                user_id INTEGER NOT NULL,
+                parent_id INTEGER,
+                content TEXT NOT NULL,
+                is_deleted INTEGER DEFAULT 0,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (user_id) REFERENCES users(id),
+                FOREIGN KEY (parent_id) REFERENCES comments(id)
+            )
+        ");
+
+        // Create index for faster article comment lookups
+        $this->connection->exec("
+            CREATE INDEX IF NOT EXISTS idx_comments_article ON comments(article_id)
+        ");
+
         // Migrate old schema if needed (rename password to password_hash)
         try {
             $columns = $this->connection->query("PRAGMA table_info(users)")->fetchAll();
