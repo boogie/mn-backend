@@ -28,6 +28,7 @@ class CMSClient {
                 'base_uri' => $this->apiUrl,
                 'timeout' => 10.0,
                 'verify' => false, // Disable SSL verification (server lacks CA certs)
+                'allow_redirects' => false, // Don't follow redirects
                 'headers' => [
                     // Authorization header removed - Articles collection has public read access
                     // 'Authorization' => 'Bearer ' . $this->apiKey,
@@ -52,11 +53,12 @@ class CMSClient {
                 ]
             ]);
 
+            $status = $response->getStatusCode();
             $body = $response->getBody()->getContents();
             $data = json_decode($body, true);
 
             if ($data === null) {
-                throw new \Exception("Invalid JSON from CMS. URL: $url, Body: " . substr($body, 0, 100));
+                throw new \Exception("Invalid JSON from CMS. Status: $status, URL: $url, Body: " . substr($body, 0, 80));
             }
 
             return $data;
