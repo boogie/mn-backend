@@ -30,7 +30,8 @@ class CMSClient {
                 'verify' => false, // Disable SSL verification (server lacks CA certs)
                 'headers' => [
                     'Authorization' => 'Bearer ' . $this->apiKey,
-                    'Content-Type' => 'application/json'
+                    'Content-Type' => 'application/json',
+                    'Accept' => 'application/json'
                 ]
             ]);
         } catch (\Exception $e) {
@@ -40,6 +41,8 @@ class CMSClient {
 
     public function getArticles(int $limit = 10, int $page = 1): array {
         try {
+            $url = $this->apiUrl . '/api/articles?limit=' . $limit . '&page=' . $page . '&sort=-createdAt';
+
             $response = $this->client->get('/api/articles', [
                 'query' => [
                     'limit' => $limit,
@@ -52,7 +55,7 @@ class CMSClient {
             $data = json_decode($body, true);
 
             if ($data === null) {
-                throw new \Exception("Invalid JSON response from CMS. Body: " . substr($body, 0, 200));
+                throw new \Exception("Invalid JSON from CMS. URL: $url, Body: " . substr($body, 0, 100));
             }
 
             return $data;
