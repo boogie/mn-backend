@@ -38,8 +38,9 @@ class Database {
             CREATE TABLE IF NOT EXISTS users (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 email TEXT UNIQUE NOT NULL,
-                password TEXT NOT NULL,
-                subscription_status TEXT DEFAULT 'inactive',
+                password_hash TEXT NOT NULL,
+                subscription_status TEXT DEFAULT 'free',
+                subscription_end_date TEXT,
                 stripe_customer_id TEXT,
                 stripe_subscription_id TEXT,
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
