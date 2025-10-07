@@ -1,0 +1,65 @@
+name: Deploy Backend to FTP
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.1'
+        extensions: pdo, pdo_mysql
+
+    - name: Install Composer dependencies
+      run: composer install --no-dev --optimize-autoloader
+
+    - name: Create .env file
+      run: |
+        cat > .env << 'EOF'
+        # Database
+        DB_HOST=${{ secrets.DB_HOST }}
+        DB_NAME=${{ secrets.DB_NAME }}
+        DB_USER=${{ secrets.DB_USER }}
+        DB_PASS=${{ secrets.DB_PASS }}
+
+        # JWT
+        JWT_SECRET=${{ secrets.JWT_SECRET }}
+        JWT_EXPIRY=3600
+
+        # CMS API
+        CMS_API_URL=${{ secrets.CMS_API_URL }}
+        CMS_API_KEY=${{ secrets.CMS_API_KEY }}
+
+        # Stripe
+        STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY }}
+        STRIPE_PUBLISHABLE_KEY=${{ secrets.STRIPE_PUBLISHABLE_KEY }}
+        STRIPE_WEBHOOK_SECRET=${{ secrets.STRIPE_WEBHOOK_SECRET }}
+        STRIPE_PRICE_ID=${{ secrets.STRIPE_PRICE_ID }}
+
+        # App
+        APP_URL=${{ secrets.APP_URL }}
+        CORS_ORIGIN=${{ secrets.CORS_ORIGIN }}
+        EOF
+
+    - name: Deploy to FTP
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+      with:
+        server: ${{ secrets.FTP_SERVER }}
+        username: ${{ secrets.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
+        server-dir: ${{ secrets.FTP_SERVER_DIR }}/
+        exclude: |
+          **/.git*
+          **/.git*/**
+          **/node_modules/**
+          **/tests/**
+          **/.DS_Store
