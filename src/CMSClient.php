@@ -27,6 +27,7 @@ class CMSClient {
             $this->client = new Client([
                 'base_uri' => $this->apiUrl,
                 'timeout' => 10.0,
+                'verify' => false, // Disable SSL verification (server lacks CA certs)
                 'headers' => [
                     'Authorization' => 'Bearer ' . $this->apiKey,
                     'Content-Type' => 'application/json'
