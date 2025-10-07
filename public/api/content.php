@@ -23,10 +23,10 @@ try {
     Response::unauthorized('Invalid token');
 }
 
-// Check subscription (PAYWALL)
-if (!$subscription->isSubscribed($userId)) {
-    Response::forbidden('Subscription required');
-}
+// Check subscription (PAYWALL) - DISABLED FOR NOW
+// if (!$subscription->isSubscribed($userId)) {
+//     Response::forbidden('Subscription required');
+// }
 
 $method = $_SERVER['REQUEST_METHOD'];
 
