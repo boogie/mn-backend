@@ -14,7 +14,7 @@ class Comment {
      */
     public function getArticleComments(string $articleId): array {
         $comments = $this->db->fetchAll(
-            "SELECT c.*, u.email as user_email, u.billing_name as user_name
+            "SELECT c.*, u.email as user_email
              FROM comments c
              JOIN users u ON c.user_id = u.id
              WHERE c.article_id = ?
@@ -114,7 +114,7 @@ class Comment {
      */
     private function getComment(int $commentId): array {
         $comment = $this->db->fetchOne(
-            "SELECT c.*, u.email as user_email, u.billing_name as user_name
+            "SELECT c.*, u.email as user_email
              FROM comments c
              JOIN users u ON c.user_id = u.id
              WHERE c.id = ?",
@@ -179,7 +179,7 @@ class Comment {
             'id' => (int)$comment['id'],
             'article_id' => $comment['article_id'],
             'user_id' => (int)$comment['user_id'],
-            'user_name' => $comment['user_name'] ?: $comment['user_email'],
+            'user_name' => $comment['user_email'], // Use email as display name
             'parent_id' => $comment['parent_id'] ? (int)$comment['parent_id'] : null,
             'content' => $comment['is_deleted'] ? '[Comment deleted by user]' : $comment['content'],
             'is_deleted' => (bool)$comment['is_deleted'],
