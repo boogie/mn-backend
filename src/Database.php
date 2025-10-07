@@ -6,12 +6,16 @@ class Database {
     private \PDO $connection;
 
     private function __construct() {
-        $host = $_ENV['DB_HOST'];
-        $db = $_ENV['DB_NAME'];
-        $user = $_ENV['DB_USER'];
-        $pass = $_ENV['DB_PASS'];
+        // Use SQLite for development
+        $dbPath = __DIR__ . '/../database/mn.db';
+        $dbDir = dirname($dbPath);
 
-        $dsn = "mysql:host=$host;dbname=$db;charset=utf8mb4";
+        // Create database directory if it doesn't exist
+        if (!file_exists($dbDir)) {
+            mkdir($dbDir, 0755, true);
+        }
+
+        $dsn = "sqlite:" . $dbPath;
 
         $options = [
             \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
@@ -20,11 +24,28 @@ class Database {
         ];
 
         try {
-            $this->connection = new \PDO($dsn, $user, $pass, $options);
+            $this->connection = new \PDO($dsn, null, null, $options);
+            $this->initTables();
         } catch (\PDOException $e) {
             error_log("Database connection failed: " . $e->getMessage());
             throw new \Exception("Database connection failed");
         }
+    }
+
+    private function initTables(): void {
+        // Create users table
+        $this->connection->exec("
+            CREATE TABLE IF NOT EXISTS users (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                email TEXT UNIQUE NOT NULL,
+                password TEXT NOT NULL,
+                subscription_status TEXT DEFAULT 'inactive',
+                stripe_customer_id TEXT,
+                stripe_subscription_id TEXT,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            )
+        ");
     }
 
     public static function getInstance(): Database {

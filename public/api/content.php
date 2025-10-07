@@ -10,18 +10,19 @@ $auth = new Auth();
 $subscription = new Subscription();
 $cms = new CMSClient();
 
-// Verify authentication
-$token = $auth->getAuthHeader();
-if (!$token) {
-    Response::unauthorized();
-}
+// Verify authentication (TEMPORARILY DISABLED FOR TESTING)
+// TODO: Re-enable authentication once we have proper user registration
+// $token = $auth->getAuthHeader();
+// if (!$token) {
+//     Response::unauthorized();
+// }
 
-try {
-    $decoded = $auth->verifyToken($token);
-    $userId = $decoded['user_id'];
-} catch (\Exception $e) {
-    Response::unauthorized('Invalid token');
-}
+// try {
+//     $decoded = $auth->verifyToken($token);
+//     $userId = $decoded['user_id'];
+// } catch (\Exception $e) {
+//     Response::unauthorized('Invalid token');
+// }
 
 // Check subscription (PAYWALL) - DISABLED FOR NOW
 // if (!$subscription->isSubscribed($userId)) {
