@@ -1,16 +1,14 @@
 <?php
-echo json_encode(['version' => '1.0', 'timestamp' => time()]);
-exit;
+require_once __DIR__ . '/../../vendor/autoload.php';
+
+use Dotenv\Dotenv;
+use MagicianNews\CMSClient;
 
 header('Content-Type: application/json');
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 try {
-    require_once __DIR__ . '/../../vendor/autoload.php';
-
-    use Dotenv\Dotenv;
-    use MagicianNews\CMSClient;
 
     $dotenv = Dotenv::createImmutable(__DIR__ . '/../..');
     $dotenv->load();
