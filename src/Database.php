@@ -47,6 +47,42 @@ class Database {
                 updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
             )
         ");
+
+        // Migrate old schema if needed (rename password to password_hash)
+        try {
+            $columns = $this->connection->query("PRAGMA table_info(users)")->fetchAll();
+            $hasPassword = false;
+            $hasPasswordHash = false;
+
+            foreach ($columns as $col) {
+                if ($col['name'] === 'password') $hasPassword = true;
+                if ($col['name'] === 'password_hash') $hasPasswordHash = true;
+            }
+
+            // If old schema detected, migrate it
+            if ($hasPassword && !$hasPasswordHash) {
+                $this->connection->exec("
+                    ALTER TABLE users RENAME TO users_old;
+                    CREATE TABLE users (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        email TEXT UNIQUE NOT NULL,
+                        password_hash TEXT NOT NULL,
+                        subscription_status TEXT DEFAULT 'free',
+                        subscription_end_date TEXT,
+                        stripe_customer_id TEXT,
+                        stripe_subscription_id TEXT,
+                        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+                    );
+                    INSERT INTO users (id, email, password_hash, subscription_status, stripe_customer_id, stripe_subscription_id, created_at, updated_at)
+                    SELECT id, email, password, subscription_status, stripe_customer_id, stripe_subscription_id, created_at, updated_at FROM users_old;
+                    DROP TABLE users_old;
+                ");
+                error_log("Migrated users table from 'password' to 'password_hash' column");
+            }
+        } catch (\Exception $e) {
+            error_log("Schema migration check failed: " . $e->getMessage());
+        }
     }
 
     public static function getInstance(): Database {
