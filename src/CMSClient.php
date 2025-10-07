@@ -13,12 +13,10 @@ class CMSClient {
     public function __construct() {
         // Check for required environment variables
         if (empty($_ENV['CMS_API_URL'])) {
-            \error_log("CMSClient Error: CMS_API_URL environment variable is not set");
             throw new \Exception("CMS configuration error: CMS_API_URL is missing");
         }
 
         if (empty($_ENV['CMS_API_KEY'])) {
-            \error_log("CMSClient Error: CMS_API_KEY environment variable is not set");
             throw new \Exception("CMS configuration error: CMS_API_KEY is missing");
         }
 
@@ -35,8 +33,7 @@ class CMSClient {
                 ]
             ]);
         } catch (\Exception $e) {
-            \error_log("CMSClient Error: Failed to initialize Guzzle client - " . $e->getMessage());
-            throw new \Exception("Failed to initialize CMS client");
+            throw new \Exception("Failed to initialize CMS client: " . $e->getMessage());
         }
     }
 
@@ -52,8 +49,7 @@ class CMSClient {
 
             return json_decode($response->getBody()->getContents(), true);
         } catch (\Exception $e) {
-            \error_log("CMS API Error: " . $e->getMessage());
-            throw new \Exception("Failed to fetch articles");
+            throw new \Exception("Failed to fetch articles: " . $e->getMessage());
         }
     }
 
@@ -62,8 +58,7 @@ class CMSClient {
             $response = $this->client->get("/api/articles/{$id}");
             return json_decode($response->getBody()->getContents(), true);
         } catch (\Exception $e) {
-            \error_log("CMS API Error: " . $e->getMessage());
-            throw new \Exception("Article not found");
+            throw new \Exception("Article not found: " . $e->getMessage());
         }
     }
 
@@ -82,8 +77,7 @@ class CMSClient {
 
             return json_decode($response->getBody()->getContents(), true);
         } catch (\Exception $e) {
-            \error_log("CMS API Error: " . $e->getMessage());
-            throw new \Exception("Search failed");
+            throw new \Exception("Search failed: " . $e->getMessage());
         }
     }
 }
