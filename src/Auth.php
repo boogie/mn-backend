@@ -11,10 +11,15 @@ class Auth {
         $this->db = Database::getInstance();
     }
 
-    public function register(string $email, string $password): array {
+    public function register(string $email, string $password, string $name): array {
         // Validate email
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             throw new \Exception("Invalid email address");
+        }
+
+        // Validate name
+        if (empty(trim($name))) {
+            throw new \Exception("Name is required");
         }
 
         // Check if user exists
@@ -32,8 +37,8 @@ class Auth {
 
         // Insert user
         $this->db->query(
-            "INSERT INTO users (email, password_hash, subscription_status) VALUES (?, ?, ?)",
-            [$email, $passwordHash, 'free']
+            "INSERT INTO users (email, password_hash, name, subscription_status) VALUES (?, ?, ?, ?)",
+            [$email, $passwordHash, trim($name), 'free']
         );
 
         $userId = $this->db->getConnection()->lastInsertId();

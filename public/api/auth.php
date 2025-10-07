@@ -20,7 +20,8 @@ try {
             if ($action === 'register') {
                 $result = $auth->register(
                     $input['email'] ?? '',
-                    $input['password'] ?? ''
+                    $input['password'] ?? '',
+                    $input['name'] ?? ''
                 );
                 Response::success($result, 'Registration successful');
             } elseif ($action === 'login') {
