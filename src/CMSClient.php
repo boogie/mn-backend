@@ -54,11 +54,12 @@ class CMSClient {
             ]);
 
             $status = $response->getStatusCode();
+            $location = $response->getHeader('Location')[0] ?? 'none';
             $body = $response->getBody()->getContents();
             $data = json_decode($body, true);
 
             if ($data === null) {
-                throw new \Exception("Invalid JSON from CMS. Status: $status, URL: $url, Body: " . substr($body, 0, 80));
+                throw new \Exception("Invalid JSON. Status: $status, Location: $location, Body: " . substr($body, 0, 60));
             }
 
             return $data;
