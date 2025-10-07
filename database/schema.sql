@@ -2,11 +2,12 @@
 -- Run this on your PHP hosting MySQL database
 
 -- Create database (if you have permissions, otherwise create via hosting panel)
-CREATE DATABASE IF NOT EXISTS magician_users
-  CHARACTER SET utf8mb4
-  COLLATE utf8mb4_unicode_ci;
+-- Note: Database name is "mn"
+-- CREATE DATABASE IF NOT EXISTS mn
+--   CHARACTER SET utf8mb4
+--   COLLATE utf8mb4_unicode_ci;
 
-USE magician_users;
+USE mn;
 
 -- Users table
 CREATE TABLE IF NOT EXISTS users (

@@ -19,7 +19,7 @@ FTP_SERVER_DIR = /www/magicians.news/api/
 ### Database Configuration
 ```
 DB_HOST = localhost  (or your MySQL host)
-DB_NAME = magician_users
+DB_NAME = mn
 DB_USER = your_mysql_username
 DB_PASS = your_mysql_password
 ```
@@ -110,8 +110,8 @@ After adding secrets, you can test by:
 ### Database Connection Failed
 - Verify MySQL is running
 - Check DB_HOST (use `localhost` if MySQL is on same server)
-- Ensure database `magician_users` exists
-- Import schema: `mysql -u user -p magician_users < database/schema.sql`
+- Ensure database `mn` exists
+- Import schema: `mysql -u user -p mn < database/schema.sql`
 
 ### CMS API Not Working
 - Deploy CMS to Railway first
