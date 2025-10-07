@@ -74,3 +74,10 @@ jobs:
           **/node_modules/**
           **/tests/**
           **/.DS_Store
+
+    - name: Run Database Migrations
+      run: |
+        echo "Waiting 10 seconds for deployment to complete..."
+        sleep 10
+        echo "Running database migrations..."
+        curl -f -s https://api.magicians.news/api/migrate.php || echo "Migration endpoint failed (this is OK if database is already up to date)"

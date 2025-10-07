@@ -27,8 +27,7 @@ class Database {
             $this->connection = new \PDO($dsn, null, null, $options);
             $this->initTables();
         } catch (\PDOException $e) {
-            \error_log("Database connection failed: " . $e->getMessage());
-            throw new \Exception("Database connection failed");
+            throw new \Exception("Database connection failed: " . $e->getMessage());
         }
     }
 
@@ -39,11 +38,12 @@ class Database {
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 email TEXT UNIQUE NOT NULL,
                 password_hash TEXT NOT NULL,
+                name TEXT NOT NULL,
+                billing_name TEXT,
                 subscription_status TEXT DEFAULT 'free',
                 subscription_end_date TEXT,
                 stripe_customer_id TEXT,
                 stripe_subscription_id TEXT,
-                billing_name TEXT,
                 billing_country TEXT,
                 billing_postal_code TEXT,
                 billing_city TEXT,
@@ -92,40 +92,47 @@ class Database {
             CREATE INDEX IF NOT EXISTS idx_comments_article ON comments(article_id)
         ");
 
-        // Migrate old schema if needed (rename password to password_hash)
+        // Migrate old schema if needed
         try {
             $columns = $this->connection->query("PRAGMA table_info(users)")->fetchAll();
-            $hasPassword = false;
-            $hasPasswordHash = false;
+            $columnNames = array_column($columns, 'name');
 
-            foreach ($columns as $col) {
-                if ($col['name'] === 'password') $hasPassword = true;
-                if ($col['name'] === 'password_hash') $hasPasswordHash = true;
-            }
+            $hasPassword = in_array('password', $columnNames);
+            $hasPasswordHash = in_array('password_hash', $columnNames);
+            $hasName = in_array('name', $columnNames);
+            $hasBillingName = in_array('billing_name', $columnNames);
 
-            // If old schema detected, migrate it
+            // Migration 1: password -> password_hash
             if ($hasPassword && !$hasPasswordHash) {
-                $this->connection->exec("
-                    ALTER TABLE users RENAME TO users_old;
-                    CREATE TABLE users (
-                        id INTEGER PRIMARY KEY AUTOINCREMENT,
-                        email TEXT UNIQUE NOT NULL,
-                        password_hash TEXT NOT NULL,
-                        subscription_status TEXT DEFAULT 'free',
-                        subscription_end_date TEXT,
-                        stripe_customer_id TEXT,
-                        stripe_subscription_id TEXT,
-                        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-                    );
-                    INSERT INTO users (id, email, password_hash, subscription_status, stripe_customer_id, stripe_subscription_id, created_at, updated_at)
-                    SELECT id, email, password, subscription_status, stripe_customer_id, stripe_subscription_id, created_at, updated_at FROM users_old;
-                    DROP TABLE users_old;
-                ");
-                \error_log("Migrated users table from 'password' to 'password_hash' column");
+                $this->connection->exec("ALTER TABLE users RENAME COLUMN password TO password_hash");
             }
+
+            // Migration 2: Add name column if missing
+            if (!$hasName) {
+                $this->connection->exec("ALTER TABLE users ADD COLUMN name TEXT");
+                // Set name to email for existing users
+                $this->connection->exec("UPDATE users SET name = email WHERE name IS NULL");
+            }
+
+            // Migration 3: Add billing_name if missing (legal name for invoices)
+            if (!$hasBillingName) {
+                $this->connection->exec("ALTER TABLE users ADD COLUMN billing_name TEXT");
+            }
+
+            // Migration 4: Add billing columns if missing
+            $billingColumns = ['billing_country', 'billing_postal_code', 'billing_city', 'billing_line1', 'vat_number', 'company_name'];
+            foreach ($billingColumns as $col) {
+                if (!in_array($col, $columnNames)) {
+                    $this->connection->exec("ALTER TABLE users ADD COLUMN $col TEXT");
+                }
+            }
+
         } catch (\Exception $e) {
-            \error_log("Schema migration check failed: " . $e->getMessage());
+            // Migration failed - log to file instead
+            file_put_contents(__DIR__ . '/../database/migration_errors.log',
+                date('Y-m-d H:i:s') . ": " . $e->getMessage() . "\n",
+                FILE_APPEND
+            );
         }
     }
 

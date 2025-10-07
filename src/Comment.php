@@ -14,7 +14,7 @@ class Comment {
      */
     public function getArticleComments(string $articleId): array {
         $comments = $this->db->fetchAll(
-            "SELECT c.*, u.email as user_email
+            "SELECT c.*, u.name as user_name
              FROM comments c
              JOIN users u ON c.user_id = u.id
              WHERE c.article_id = ?
@@ -114,7 +114,7 @@ class Comment {
      */
     private function getComment(int $commentId): array {
         $comment = $this->db->fetchOne(
-            "SELECT c.*, u.email as user_email
+            "SELECT c.*, u.name as user_name
              FROM comments c
              JOIN users u ON c.user_id = u.id
              WHERE c.id = ?",
