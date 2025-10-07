@@ -9,17 +9,33 @@ class CMSClient {
     private string $apiKey;
 
     public function __construct() {
+        // Check for required environment variables
+        if (empty($_ENV['CMS_API_URL'])) {
+            error_log("CMSClient Error: CMS_API_URL environment variable is not set");
+            throw new \Exception("CMS configuration error: CMS_API_URL is missing");
+        }
+
+        if (empty($_ENV['CMS_API_KEY'])) {
+            error_log("CMSClient Error: CMS_API_KEY environment variable is not set");
+            throw new \Exception("CMS configuration error: CMS_API_KEY is missing");
+        }
+
         $this->apiUrl = $_ENV['CMS_API_URL'];
         $this->apiKey = $_ENV['CMS_API_KEY'];
 
-        $this->client = new Client([
-            'base_uri' => $this->apiUrl,
-            'timeout' => 10.0,
-            'headers' => [
-                'Authorization' => 'Bearer ' . $this->apiKey,
-                'Content-Type' => 'application/json'
-            ]
-        ]);
+        try {
+            $this->client = new Client([
+                'base_uri' => $this->apiUrl,
+                'timeout' => 10.0,
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $this->apiKey,
+                    'Content-Type' => 'application/json'
+                ]
+            ]);
+        } catch (\Exception $e) {
+            error_log("CMSClient Error: Failed to initialize Guzzle client - " . $e->getMessage());
+            throw new \Exception("Failed to initialize CMS client");
+        }
     }
 
     public function getArticles(int $limit = 10, int $page = 1): array {

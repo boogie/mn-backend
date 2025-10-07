@@ -8,7 +8,13 @@ use MagicianNews\Response;
 
 $auth = new Auth();
 $subscription = new Subscription();
-$cms = new CMSClient();
+
+try {
+    $cms = new CMSClient();
+} catch (\Exception $e) {
+    error_log("Failed to initialize CMSClient: " . $e->getMessage());
+    Response::error("CMS connection error: " . $e->getMessage(), 500);
+}
 
 // Verify authentication (TEMPORARILY DISABLED FOR TESTING)
 // TODO: Re-enable authentication once we have proper user registration
@@ -56,5 +62,6 @@ try {
         Response::error('Method not allowed', 405);
     }
 } catch (\Exception $e) {
-    Response::error($e->getMessage());
+    error_log("Content API Error: " . $e->getMessage());
+    Response::error($e->getMessage(), 500);
 }
