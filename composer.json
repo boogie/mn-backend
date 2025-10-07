@@ -6,7 +6,8 @@
     "vlucas/phpdotenv": "^5.5",
     "firebase/php-jwt": "^6.8",
     "guzzlehttp/guzzle": "^7.8",
-    "stripe/stripe-php": "^13.0"
+    "stripe/stripe-php": "^13.0",
+    "league/oauth2-google": "^4.0"
   },
   "autoload": {
     "psr-4": {

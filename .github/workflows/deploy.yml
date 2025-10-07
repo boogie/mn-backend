@@ -48,6 +48,11 @@ jobs:
         # App
         APP_URL=${{ secrets.APP_URL }}
         CORS_ORIGIN=${{ secrets.CORS_ORIGIN }}
+
+        # Google OAuth
+        GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
+        GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}
+        GOOGLE_REDIRECT_URI=https://api.magicians.news/oauth/google/callback
         EOF
 
     - name: Deploy to FTP
