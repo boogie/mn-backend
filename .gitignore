@@ -5,3 +5,4 @@ vendor/
 *.log
 composer.phar
 composer.lock
+database/
