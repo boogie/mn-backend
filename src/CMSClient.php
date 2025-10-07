@@ -29,7 +29,8 @@ class CMSClient {
                 'timeout' => 10.0,
                 'verify' => false, // Disable SSL verification (server lacks CA certs)
                 'headers' => [
-                    'Authorization' => 'Bearer ' . $this->apiKey,
+                    // Authorization header removed - Articles collection has public read access
+                    // 'Authorization' => 'Bearer ' . $this->apiKey,
                     'Content-Type' => 'application/json',
                     'Accept' => 'application/json'
                 ]
