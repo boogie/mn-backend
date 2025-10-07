@@ -27,7 +27,7 @@ class Database {
             $this->connection = new \PDO($dsn, null, null, $options);
             $this->initTables();
         } catch (\PDOException $e) {
-            error_log("Database connection failed: " . $e->getMessage());
+            \error_log("Database connection failed: " . $e->getMessage());
             throw new \Exception("Database connection failed");
         }
     }
@@ -78,10 +78,10 @@ class Database {
                     SELECT id, email, password, subscription_status, stripe_customer_id, stripe_subscription_id, created_at, updated_at FROM users_old;
                     DROP TABLE users_old;
                 ");
-                error_log("Migrated users table from 'password' to 'password_hash' column");
+                \error_log("Migrated users table from 'password' to 'password_hash' column");
             }
         } catch (\Exception $e) {
-            error_log("Schema migration check failed: " . $e->getMessage());
+            \error_log("Schema migration check failed: " . $e->getMessage());
         }
     }
 

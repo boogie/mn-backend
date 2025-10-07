@@ -93,7 +93,7 @@ class Subscription {
                     break;
             }
         } catch (\Exception $e) {
-            error_log("Webhook error: " . $e->getMessage());
+            \error_log("Webhook error: " . $e->getMessage());
             throw $e;
         }
     }
@@ -176,7 +176,7 @@ class Subscription {
 
     private function handlePaymentFailed($invoice): void {
         // Payment failed, might need to notify user
-        error_log("Payment failed for subscription: " . $invoice->subscription);
+        \error_log("Payment failed for subscription: " . $invoice->subscription);
     }
 
     private function updateSubscriptionStatus(

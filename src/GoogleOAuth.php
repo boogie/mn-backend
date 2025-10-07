@@ -35,7 +35,7 @@ class GoogleOAuth {
                 'avatar' => $user->getAvatar(),
             ];
         } catch (\Exception $e) {
-            error_log("Google OAuth Error: " . $e->getMessage());
+            \error_log("Google OAuth Error: " . $e->getMessage());
             throw new \Exception("Failed to authenticate with Google");
         }
     }
