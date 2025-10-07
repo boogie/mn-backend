@@ -24,7 +24,7 @@ class CMSClient {
 
     public function getArticles(int $limit = 10, int $page = 1): array {
         try {
-            $response = $this->client->get('/articles', [
+            $response = $this->client->get('/api/articles', [
                 'query' => [
                     'limit' => $limit,
                     'page' => $page,
@@ -41,7 +41,7 @@ class CMSClient {
 
     public function getArticle(string $id): array {
         try {
-            $response = $this->client->get("/articles/{$id}");
+            $response = $this->client->get("/api/articles/{$id}");
             return json_decode($response->getBody()->getContents(), true);
         } catch (\Exception $e) {
             error_log("CMS API Error: " . $e->getMessage());
@@ -51,7 +51,7 @@ class CMSClient {
 
     public function searchArticles(string $query): array {
         try {
-            $response = $this->client->get('/articles', [
+            $response = $this->client->get('/api/articles', [
                 'query' => [
                     'where' => [
                         'or' => [
