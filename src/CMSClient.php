@@ -48,7 +48,13 @@ class CMSClient {
                 ]
             ]);
 
-            return json_decode($response->getBody()->getContents(), true);
+            $data = json_decode($response->getBody()->getContents(), true);
+
+            if ($data === null) {
+                throw new \Exception("Invalid JSON response from CMS");
+            }
+
+            return $data;
         } catch (\Exception $e) {
             throw new \Exception("Failed to fetch articles: " . $e->getMessage());
         }
