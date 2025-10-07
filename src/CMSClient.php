@@ -48,10 +48,11 @@ class CMSClient {
                 ]
             ]);
 
-            $data = json_decode($response->getBody()->getContents(), true);
+            $body = $response->getBody()->getContents();
+            $data = json_decode($body, true);
 
             if ($data === null) {
-                throw new \Exception("Invalid JSON response from CMS");
+                throw new \Exception("Invalid JSON response from CMS. Body: " . substr($body, 0, 200));
             }
 
             return $data;
