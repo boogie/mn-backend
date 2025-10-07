@@ -3,6 +3,8 @@ namespace MagicianNews;
 
 use GuzzleHttp\Client;
 
+// Force deployment update - namespace fixes applied
+
 class CMSClient {
     private Client $client;
     private string $apiUrl;
