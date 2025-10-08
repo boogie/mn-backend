@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . '/../../../../vendor/autoload.php';
+require_once __DIR__ . '/../../../../src/config.php';
 
 use MagicianNews\Database;
 use MagicianNews\Auth;
@@ -8,7 +8,8 @@ use League\OAuth2\Client\Provider\Google;
 
 // Check if Google OAuth is configured
 if (empty($_ENV['GOOGLE_CLIENT_ID']) || empty($_ENV['GOOGLE_CLIENT_SECRET'])) {
-    header('Location: ' . $_ENV['FRONTEND_URL'] . '/login?error=oauth_not_configured');
+    $frontendUrl = $_ENV['FRONTEND_URL'] ?? 'https://magicians.news';
+    header('Location: ' . $frontendUrl . '/login?error=oauth_not_configured');
     exit;
 }
 
@@ -74,7 +75,8 @@ if (isset($_GET['code'])) {
         $jwtToken = $auth->generateToken($user['id'], $user['email']);
 
         // Redirect to frontend with token
-        header('Location: ' . $_ENV['FRONTEND_URL'] . '/oauth/callback?token=' . urlencode($jwtToken));
+        $frontendUrl = $_ENV['FRONTEND_URL'] ?? 'https://magicians.news';
+        header('Location: ' . $frontendUrl . '/oauth/callback?token=' . urlencode($jwtToken));
         exit;
 
     } catch (\Exception $e) {
@@ -82,7 +84,8 @@ if (isset($_GET['code'])) {
             date('Y-m-d H:i:s') . ": " . $e->getMessage() . "\n",
             FILE_APPEND
         );
-        header('Location: ' . $_ENV['FRONTEND_URL'] . '/login?error=oauth_failed');
+        $frontendUrl = $_ENV['FRONTEND_URL'] ?? 'https://magicians.news';
+        header('Location: ' . $frontendUrl . '/login?error=oauth_failed');
         exit;
     }
 } else {
