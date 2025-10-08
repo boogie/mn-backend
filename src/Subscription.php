@@ -42,6 +42,24 @@ class Subscription {
         return true;
     }
 
+    public function createCustomerPortalSession(int $userId): string {
+        $user = $this->db->fetchOne(
+            "SELECT stripe_customer_id FROM users WHERE id = ?",
+            [$userId]
+        );
+
+        if (!$user || !$user['stripe_customer_id']) {
+            throw new \Exception("No Stripe customer found for this user");
+        }
+
+        $session = \Stripe\BillingPortal\Session::create([
+            'customer' => $user['stripe_customer_id'],
+            'return_url' => $_ENV['APP_URL'] . '/profile',
+        ]);
+
+        return $session->url;
+    }
+
     public function createCheckoutSession(int $userId, string $email): string {
         $session = Session::create([
             'mode' => 'subscription',

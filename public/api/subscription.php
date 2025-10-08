@@ -42,6 +42,10 @@ try {
                 $user = $auth->getCurrentUser($token);
                 $checkoutUrl = $subscription->createCheckoutSession($userId, $user['email']);
                 Response::success(['checkout_url' => $checkoutUrl]);
+            } elseif ($action === 'portal') {
+                // Create customer portal session
+                $portalUrl = $subscription->createCustomerPortalSession($userId);
+                Response::success(['portal_url' => $portalUrl]);
             } else {
                 Response::error('Invalid action');
             }
