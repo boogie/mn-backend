@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 try {
     $db = Database::getInstance();
-    $auth = new Auth($db);
+    $auth = new Auth();
 
     // Get auth token
     $headers = getallheaders();

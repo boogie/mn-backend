@@ -37,7 +37,7 @@ if (isset($_GET['code'])) {
 
         // Initialize database and auth
         $db = Database::getInstance();
-        $auth = new Auth($db);
+        $auth = new Auth();
 
         // Check if user exists
         $user = $db->fetchOne(
