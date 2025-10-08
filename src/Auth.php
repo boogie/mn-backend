@@ -35,17 +35,29 @@ class Auth {
         // Hash password
         $passwordHash = password_hash($password, PASSWORD_BCRYPT);
 
+        // Generate email verification token
+        $verificationToken = bin2hex(random_bytes(32));
+
         // Insert user
         $this->db->query(
-            "INSERT INTO users (email, password_hash, name, subscription_status) VALUES (?, ?, ?, ?)",
-            [$email, $passwordHash, trim($name), 'free']
+            "INSERT INTO users (email, password_hash, name, subscription_status, email_verification_token, email_verified) VALUES (?, ?, ?, ?, ?, ?)",
+            [$email, $passwordHash, trim($name), 'free', $verificationToken, 0]
         );
 
         $userId = $this->db->getConnection()->lastInsertId();
 
+        // Send verification email
+        try {
+            $emailService = new Email();
+            $emailService->sendVerificationEmail($email, $name, $verificationToken);
+        } catch (\Exception $e) {
+            error_log("Failed to send verification email: " . $e->getMessage());
+            // Don't fail registration if email sending fails
+        }
+
         // Fetch the created user
         $user = $this->db->fetchOne(
-            "SELECT id, email, name, subscription_status, subscription_end_date, created_at FROM users WHERE id = ?",
+            "SELECT id, email, name, subscription_status, subscription_end_date, email_verified, created_at FROM users WHERE id = ?",
             [$userId]
         );
 
@@ -59,6 +71,7 @@ class Auth {
                 'name' => $user['name'],
                 'subscription_status' => $user['subscription_status'],
                 'subscription_end_date' => $user['subscription_end_date'],
+                'email_verified' => (bool)$user['email_verified'],
                 'created_at' => $user['created_at']
             ],
             'token' => $token
@@ -67,7 +80,7 @@ class Auth {
 
     public function login(string $email, string $password, bool $rememberMe = true): array {
         $user = $this->db->fetchOne(
-            "SELECT id, email, name, password_hash, subscription_status, subscription_end_date, created_at
+            "SELECT id, email, name, password_hash, subscription_status, subscription_end_date, email_verified, created_at
              FROM users WHERE email = ?",
             [$email]
         );
@@ -90,6 +103,7 @@ class Auth {
                 'name' => $user['name'],
                 'subscription_status' => $user['subscription_status'],
                 'subscription_end_date' => $user['subscription_end_date'],
+                'email_verified' => (bool)$user['email_verified'],
                 'created_at' => $user['created_at']
             ],
             'token' => $token
@@ -117,7 +131,7 @@ class Auth {
             $decoded = $this->verifyToken($token);
 
             $user = $this->db->fetchOne(
-                "SELECT id, email, name, subscription_status, subscription_end_date, created_at
+                "SELECT id, email, name, subscription_status, subscription_end_date, email_verified, created_at
                  FROM users WHERE id = ?",
                 [$decoded['user_id']]
             );
@@ -125,6 +139,9 @@ class Auth {
             if (!$user) {
                 return null;
             }
+
+            // Convert email_verified to boolean
+            $user['email_verified'] = (bool)$user['email_verified'];
 
             return $user;
         } catch (\Exception $e) {
@@ -162,5 +179,138 @@ class Auth {
         }
 
         return null;
+    }
+
+    /**
+     * Request password reset - sends email with reset token
+     */
+    public function requestPasswordReset(string $email): bool {
+        $user = $this->db->fetchOne(
+            "SELECT id, email, name FROM users WHERE email = ?",
+            [$email]
+        );
+
+        if (!$user) {
+            // Don't reveal if email exists or not for security
+            return true;
+        }
+
+        // Generate reset token
+        $resetToken = bin2hex(random_bytes(32));
+        $expires = date('Y-m-d H:i:s', time() + 3600); // 1 hour
+
+        // Store token
+        $this->db->query(
+            "UPDATE users SET password_reset_token = ?, password_reset_expires = ? WHERE id = ?",
+            [$resetToken, $expires, $user['id']]
+        );
+
+        // Send reset email
+        try {
+            $emailService = new Email();
+            $emailService->sendPasswordResetEmail($user['email'], $user['name'], $resetToken);
+        } catch (\Exception $e) {
+            error_log("Failed to send password reset email: " . $e->getMessage());
+            throw new \Exception("Failed to send password reset email");
+        }
+
+        return true;
+    }
+
+    /**
+     * Reset password using token
+     */
+    public function resetPassword(string $token, string $newPassword): bool {
+        // Find user with valid token
+        $user = $this->db->fetchOne(
+            "SELECT id FROM users
+             WHERE password_reset_token = ?
+             AND password_reset_expires > datetime('now')",
+            [$token]
+        );
+
+        if (!$user) {
+            throw new \Exception("Invalid or expired reset token");
+        }
+
+        // Hash new password
+        $passwordHash = password_hash($newPassword, PASSWORD_BCRYPT);
+
+        // Update password and clear reset token
+        $this->db->query(
+            "UPDATE users SET
+             password_hash = ?,
+             password_reset_token = NULL,
+             password_reset_expires = NULL
+             WHERE id = ?",
+            [$passwordHash, $user['id']]
+        );
+
+        return true;
+    }
+
+    /**
+     * Verify email using token
+     */
+    public function verifyEmail(string $token): array {
+        $user = $this->db->fetchOne(
+            "SELECT id, email, name FROM users WHERE email_verification_token = ?",
+            [$token]
+        );
+
+        if (!$user) {
+            throw new \Exception("Invalid verification token");
+        }
+
+        // Mark email as verified
+        $this->db->query(
+            "UPDATE users SET email_verified = 1, email_verification_token = NULL WHERE id = ?",
+            [$user['id']]
+        );
+
+        // Generate login token
+        $jwtToken = $this->generateToken($user['id'], $user['email']);
+
+        return [
+            'user' => [
+                'id' => $user['id'],
+                'email' => $user['email'],
+                'name' => $user['name'],
+                'email_verified' => true
+            ],
+            'token' => $jwtToken
+        ];
+    }
+
+    /**
+     * Resend verification email
+     */
+    public function resendVerificationEmail(string $email): bool {
+        $user = $this->db->fetchOne(
+            "SELECT id, email, name, email_verified FROM users WHERE email = ?",
+            [$email]
+        );
+
+        if (!$user) {
+            throw new \Exception("User not found");
+        }
+
+        if ($user['email_verified']) {
+            throw new \Exception("Email already verified");
+        }
+
+        // Generate new token
+        $verificationToken = bin2hex(random_bytes(32));
+
+        $this->db->query(
+            "UPDATE users SET email_verification_token = ? WHERE id = ?",
+            [$verificationToken, $user['id']]
+        );
+
+        // Send email
+        $emailService = new Email();
+        $emailService->sendVerificationEmail($user['email'], $user['name'], $verificationToken);
+
+        return true;
     }
 }

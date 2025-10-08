@@ -23,7 +23,7 @@ try {
                     $input['password'] ?? '',
                     $input['name'] ?? ''
                 );
-                Response::success($result, 'Registration successful');
+                Response::success($result, 'Registration successful. Please check your email to verify your account.');
             } elseif ($action === 'login') {
                 $rememberMe = $input['remember_me'] ?? true;
                 $result = $auth->login(
@@ -32,6 +32,21 @@ try {
                     $rememberMe
                 );
                 Response::success($result, 'Login successful');
+            } elseif ($action === 'forgot-password') {
+                $auth->requestPasswordReset($input['email'] ?? '');
+                Response::success(null, 'If an account exists with this email, a password reset link has been sent.');
+            } elseif ($action === 'reset-password') {
+                $auth->resetPassword(
+                    $input['token'] ?? '',
+                    $input['password'] ?? ''
+                );
+                Response::success(null, 'Password reset successful. You can now log in with your new password.');
+            } elseif ($action === 'verify-email') {
+                $result = $auth->verifyEmail($input['token'] ?? '');
+                Response::success($result, 'Email verified successfully!');
+            } elseif ($action === 'resend-verification') {
+                $auth->resendVerificationEmail($input['email'] ?? '');
+                Response::success(null, 'Verification email sent. Please check your inbox.');
             } else {
                 Response::error('Invalid action');
             }

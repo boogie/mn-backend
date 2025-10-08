@@ -155,6 +155,22 @@ class Database {
             // Note: SQLite doesn't support ALTER COLUMN, so we skip this migration
             // OAuth users will have an empty password_hash
 
+            // Migration 7: Add email verification fields
+            if (!in_array('email_verified', $columnNames)) {
+                $this->connection->exec("ALTER TABLE users ADD COLUMN email_verified INTEGER DEFAULT 0");
+            }
+            if (!in_array('email_verification_token', $columnNames)) {
+                $this->connection->exec("ALTER TABLE users ADD COLUMN email_verification_token TEXT");
+            }
+
+            // Migration 8: Add password reset fields
+            if (!in_array('password_reset_token', $columnNames)) {
+                $this->connection->exec("ALTER TABLE users ADD COLUMN password_reset_token TEXT");
+            }
+            if (!in_array('password_reset_expires', $columnNames)) {
+                $this->connection->exec("ALTER TABLE users ADD COLUMN password_reset_expires DATETIME");
+            }
+
         } catch (\Exception $e) {
             // Migration failed - log to file instead
             file_put_contents(__DIR__ . '/../database/migration_errors.log',
