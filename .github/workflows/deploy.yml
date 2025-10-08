@@ -54,11 +54,13 @@ jobs:
         # App
         APP_URL=${{ secrets.APP_URL }}
         CORS_ORIGIN=${{ secrets.CORS_ORIGIN }}
+        BACKEND_URL=https://api.magicians.news
+        FRONTEND_URL=https://magicians.news
 
         # Google OAuth
         GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
         GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}
-        GOOGLE_REDIRECT_URI=https://api.magicians.news/oauth/google/callback
+        GOOGLE_REDIRECT_URI=https://api.magicians.news/api/oauth/google/callback.php
         EOF
 
     - name: Deploy to FTP
