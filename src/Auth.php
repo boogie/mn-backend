@@ -65,7 +65,7 @@ class Auth {
         ];
     }
 
-    public function login(string $email, string $password): array {
+    public function login(string $email, string $password, bool $rememberMe = true): array {
         $user = $this->db->fetchOne(
             "SELECT id, email, name, password_hash, subscription_status, subscription_end_date, created_at
              FROM users WHERE email = ?",
@@ -80,8 +80,8 @@ class Auth {
             throw new \Exception("Invalid credentials");
         }
 
-        // Generate token
-        $token = $this->generateToken($user['id'], $user['email']);
+        // Generate token with appropriate expiry
+        $token = $this->generateToken($user['id'], $user['email'], $rememberMe);
 
         return [
             'user' => [
@@ -136,12 +136,16 @@ class Auth {
         return $this->getCurrentUser($token);
     }
 
-    public function generateToken(int $userId, string $email): string {
+    public function generateToken(int $userId, string $email, bool $rememberMe = true): string {
+        // If remember_me is true, set expiry to 365 days (forever)
+        // If remember_me is false, use the default JWT_EXPIRY from env (24 hours)
+        $expiry = $rememberMe ? (365 * 24 * 60 * 60) : (int)$_ENV['JWT_EXPIRY'];
+
         $payload = [
             'user_id' => $userId,
             'email' => $email,
             'iat' => time(),
-            'exp' => time() + (int)$_ENV['JWT_EXPIRY']
+            'exp' => time() + $expiry
         ];
 
         return JWT::encode($payload, $_ENV['JWT_SECRET'], 'HS256');

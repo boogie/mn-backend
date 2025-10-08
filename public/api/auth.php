@@ -25,9 +25,11 @@ try {
                 );
                 Response::success($result, 'Registration successful');
             } elseif ($action === 'login') {
+                $rememberMe = $input['remember_me'] ?? true;
                 $result = $auth->login(
                     $input['email'] ?? '',
-                    $input['password'] ?? ''
+                    $input['password'] ?? '',
+                    $rememberMe
                 );
                 Response::success($result, 'Login successful');
             } else {
