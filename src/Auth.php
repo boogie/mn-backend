@@ -136,7 +136,7 @@ class Auth {
         return $this->getCurrentUser($token);
     }
 
-    private function generateToken(int $userId, string $email): string {
+    public function generateToken(int $userId, string $email): string {
         $payload = [
             'user_id' => $userId,
             'email' => $email,

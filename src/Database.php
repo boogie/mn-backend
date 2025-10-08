@@ -37,9 +37,10 @@ class Database {
             CREATE TABLE IF NOT EXISTS users (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 email TEXT UNIQUE NOT NULL,
-                password_hash TEXT NOT NULL,
+                password_hash TEXT,
                 name TEXT NOT NULL,
                 billing_name TEXT,
+                google_id TEXT UNIQUE,
                 subscription_status TEXT DEFAULT 'free',
                 subscription_end_date TEXT,
                 stripe_customer_id TEXT,
@@ -126,6 +127,16 @@ class Database {
                     $this->connection->exec("ALTER TABLE users ADD COLUMN $col TEXT");
                 }
             }
+
+            // Migration 5: Add google_id for OAuth
+            if (!in_array('google_id', $columnNames)) {
+                $this->connection->exec("ALTER TABLE users ADD COLUMN google_id TEXT");
+                $this->connection->exec("CREATE UNIQUE INDEX IF NOT EXISTS idx_users_google_id ON users(google_id) WHERE google_id IS NOT NULL");
+            }
+
+            // Migration 6: Make password_hash nullable for OAuth users
+            // Note: SQLite doesn't support ALTER COLUMN, so we skip this migration
+            // OAuth users will have an empty password_hash
 
         } catch (\Exception $e) {
             // Migration failed - log to file instead
