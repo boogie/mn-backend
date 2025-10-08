@@ -179,7 +179,7 @@ class Comment {
             'id' => (int)$comment['id'],
             'article_id' => $comment['article_id'],
             'user_id' => (int)$comment['user_id'],
-            'user_name' => $comment['user_email'], // Use email as display name
+            'user_name' => $comment['user_name'],
             'parent_id' => $comment['parent_id'] ? (int)$comment['parent_id'] : null,
             'content' => $comment['is_deleted'] ? '[Comment deleted by user]' : $comment['content'],
             'is_deleted' => (bool)$comment['is_deleted'],
