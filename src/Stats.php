@@ -5,9 +5,12 @@ class Stats {
     private Database $db;
     private CMSClient $cms;
 
+    private Newsletter $newsletter;
+
     public function __construct() {
         $this->db = Database::getInstance();
         $this->cms = new CMSClient();
+        $this->newsletter = new Newsletter();
     }
 
     /**
@@ -26,6 +29,7 @@ class Stats {
             'generated_at' => date('Y-m-d H:i:s'),
             'users' => $this->getUserStats(),
             'subscriptions' => $this->getSubscriptionStats(),
+            'newsletter' => $this->newsletter->getStats(),
             'content' => $this->getContentStats(),
             'engagement' => $this->getEngagementStats(),
             'revenue' => $this->getRevenueStats(),

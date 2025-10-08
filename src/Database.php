@@ -93,6 +93,23 @@ class Database {
             CREATE INDEX IF NOT EXISTS idx_comments_article ON comments(article_id)
         ");
 
+        // Create newsletter table for pre-launch email capture
+        $this->connection->exec("
+            CREATE TABLE IF NOT EXISTS newsletter (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                email TEXT UNIQUE NOT NULL,
+                name TEXT,
+                source TEXT DEFAULT 'homepage',
+                status TEXT DEFAULT 'subscribed',
+                subscribed_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            )
+        ");
+
+        // Create index for faster email lookups
+        $this->connection->exec("
+            CREATE INDEX IF NOT EXISTS idx_newsletter_email ON newsletter(email)
+        ");
+
         // Migrate old schema if needed
         try {
             $columns = $this->connection->query("PRAGMA table_info(users)")->fetchAll();
