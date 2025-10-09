@@ -4,6 +4,7 @@ namespace MagicianNews;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 
+// Last updated: 2025-10-09 15:45 - Short token deployment
 class Auth {
     private Database $db;
 
