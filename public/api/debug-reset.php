@@ -57,5 +57,12 @@ try {
         'trace' => $e->getTraceAsString()
     ];
 
-    Response::error('Debug error', 500, $debug);
+    http_response_code(500);
+    header('Content-Type: application/json');
+    echo json_encode([
+        'success' => false,
+        'error' => 'Debug error occurred',
+        'debug' => $debug
+    ]);
+    exit;
 }
