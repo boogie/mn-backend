@@ -94,25 +94,23 @@ class Email {
     <title>{$title}</title>
 </head>
 <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f3f4f6;">
-    <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f3f4f6; padding: 40px 0;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f3f4f6; padding: 40px 0;">
         <tr>
             <td align="center">
-                <table width="600" cellpadding="0" cellspacing="0" style="max-width: 600px; width: 100%; background-color: #ffffff; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <!-- White card container -->
+                <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; width: 100%; background-color: #ffffff; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
                     <!-- Header -->
                     <tr>
                         <td style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px; text-align: center; border-radius: 12px 12px 0 0;">
                             <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 700;">🎩 Magicians News</h1>
                         </td>
                     </tr>
-
                     <!-- Content -->
                     <tr>
-                        <td style="padding: 40px;">
+                        <td style="padding: 40px; background-color: #ffffff;">
                             <p style="margin: 0 0 20px; font-size: 18px; color: #1f2937; font-weight: 600;">{$greeting}</p>
                             <p style="margin: 0 0 30px; font-size: 16px; line-height: 1.6; color: #4b5563;">{$body}</p>
-
                             <p style="margin: 30px 0 0; font-size: 14px; line-height: 1.6; color: #6b7280;">{$footer}</p>
-
                             <div style="margin-top: 30px; padding-top: 30px; border-top: 1px solid #e5e7eb;">
                                 <p style="margin: 0 0 10px; font-size: 16px; color: #1f2937; font-weight: 600;">What to expect:</p>
                                 <ul style="margin: 0; padding-left: 20px; font-size: 14px; line-height: 1.8; color: #4b5563;">
@@ -123,7 +121,6 @@ class Email {
                             </div>
                         </td>
                     </tr>
-
                     <!-- Footer -->
                     <tr>
                         <td style="background-color: #f9fafb; padding: 30px; text-align: center; border-radius: 0 0 12px 12px;">
@@ -266,34 +263,31 @@ HTML;
     <title>{$title}</title>
 </head>
 <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f3f4f6;">
-    <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f3f4f6; padding: 40px 0;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f3f4f6; padding: 40px 0;">
         <tr>
             <td align="center">
-                <table width="600" cellpadding="0" cellspacing="0" style="max-width: 600px; width: 100%; background-color: #ffffff; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <!-- White card container -->
+                <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; width: 100%; background-color: #ffffff; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
                     <!-- Header -->
                     <tr>
                         <td style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px; text-align: center; border-radius: 12px 12px 0 0;">
                             <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 700;">🎩 Magicians News</h1>
                         </td>
                     </tr>
-
                     <!-- Content -->
                     <tr>
-                        <td style="padding: 40px;">
+                        <td style="padding: 40px; background-color: #ffffff;">
                             <p style="margin: 0 0 20px; font-size: 18px; color: #1f2937; font-weight: 600;">{$greeting}</p>
                             <p style="margin: 0 0 30px; font-size: 16px; line-height: 1.6; color: #4b5563;">{$body}</p>
-
                             <!-- Button -->
-                            <table width="100%" cellpadding="0" cellspacing="0">
+                            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
                                 <tr>
                                     <td align="center" style="padding: 20px 0;">
                                         <a href="{$buttonUrl}" style="display: inline-block; background: linear-gradient(180deg, #9b87f5, #7c6ad6); color: #ffffff; text-decoration: none; padding: 16px 32px; border-radius: 8px; font-size: 16px; font-weight: 700; box-shadow: 0 4px 12px rgba(124, 106, 214, 0.3);">{$buttonText}</a>
                                     </td>
                                 </tr>
                             </table>
-
                             <p style="margin: 30px 0 0; font-size: 14px; line-height: 1.6; color: #6b7280;">{$footer}</p>
-
                             <!-- Manual link -->
                             <p style="margin: 20px 0 0; font-size: 12px; color: #9ca3af;">
                                 Or copy and paste this link into your browser:<br>
@@ -301,7 +295,6 @@ HTML;
                             </p>
                         </td>
                     </tr>
-
                     <!-- Footer -->
                     <tr>
                         <td style="background-color: #f9fafb; padding: 30px; text-align: center; border-radius: 0 0 12px 12px;">
