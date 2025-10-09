@@ -64,6 +64,73 @@ try {
                     'count' => count($subscribers),
                 ]);
 
+            } elseif ($action === 'unsubscribe') {
+                // Unsubscribe by token from email link
+                $token = $_GET['token'] ?? '';
+
+                if (empty($token)) {
+                    Response::error('Unsubscribe token is required', 400);
+                }
+
+                $result = $newsletter->unsubscribeByToken($token);
+
+                // Return HTML page instead of JSON for better UX
+                http_response_code(200);
+                header('Content-Type: text/html; charset=UTF-8');
+                echo <<<HTML
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unsubscribed - Magicians News</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 48px;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        h1 { color: #1f2937; font-size: 32px; margin-bottom: 16px; }
+        p { color: #6b7280; font-size: 16px; line-height: 1.6; margin-bottom: 32px; }
+        .icon { font-size: 64px; margin-bottom: 24px; }
+        a {
+            display: inline-block;
+            background: linear-gradient(180deg, #9b87f5, #7c6ad6);
+            color: white;
+            text-decoration: none;
+            padding: 12px 32px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+        a:hover { transform: translateY(-2px); }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="icon">✅</div>
+        <h1>Unsubscribed Successfully</h1>
+        <p>{$result['message']}<br><br>We're sorry to see you go. You won't receive any more emails from us.</p>
+        <a href="{$_ENV['FRONTEND_URL']}">Visit Magicians News</a>
+    </div>
+</body>
+</html>
+HTML;
+                exit;
+
             } else {
                 Response::error('Invalid action', 400);
             }

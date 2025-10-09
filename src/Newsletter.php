@@ -25,17 +25,24 @@ class Newsletter {
         try {
             // Check if email already exists
             $existing = $this->db->fetchOne(
-                "SELECT id, status FROM newsletter WHERE email = ?",
+                "SELECT id, status, unsubscribe_token FROM newsletter WHERE email = ?",
                 [$email]
             );
 
             if ($existing) {
                 // If previously unsubscribed, resubscribe
                 if ($existing['status'] === 'unsubscribed') {
+                    // Generate new unsubscribe token
+                    $unsubscribeToken = bin2hex(random_bytes(32));
+
                     $this->db->query(
-                        "UPDATE newsletter SET status = 'subscribed', subscribed_at = CURRENT_TIMESTAMP WHERE email = ?",
-                        [$email]
+                        "UPDATE newsletter SET status = 'subscribed', subscribed_at = CURRENT_TIMESTAMP, unsubscribe_token = ? WHERE email = ?",
+                        [$unsubscribeToken, $email]
                     );
+
+                    // Send welcome email
+                    $emailService = new Email();
+                    $emailService->sendNewsletterConfirmation($email, $name ?? '', $unsubscribeToken);
 
                     return [
                         'email' => $email,
@@ -52,16 +59,23 @@ class Newsletter {
                 ];
             }
 
+            // Generate unsubscribe token
+            $unsubscribeToken = bin2hex(random_bytes(32));
+
             // Insert new subscriber
             $this->db->query(
-                "INSERT INTO newsletter (email, name, source) VALUES (?, ?, ?)",
-                [$email, $name, $source]
+                "INSERT INTO newsletter (email, name, source, unsubscribe_token) VALUES (?, ?, ?, ?)",
+                [$email, $name, $source, $unsubscribeToken]
             );
+
+            // Send welcome email
+            $emailService = new Email();
+            $emailService->sendNewsletterConfirmation($email, $name ?? '', $unsubscribeToken);
 
             return [
                 'email' => $email,
                 'status' => 'subscribed',
-                'message' => 'Thank you for subscribing!',
+                'message' => 'Thank you for subscribing! Check your email for confirmation.',
             ];
 
         } catch (\PDOException $e) {
@@ -93,6 +107,31 @@ class Newsletter {
             'email' => $email,
             'status' => 'unsubscribed',
             'message' => 'You\'ve been unsubscribed.',
+        ];
+    }
+
+    /**
+     * Unsubscribe by token (from email link)
+     */
+    public function unsubscribeByToken(string $token): array {
+        $subscriber = $this->db->fetchOne(
+            "SELECT id, email FROM newsletter WHERE unsubscribe_token = ?",
+            [$token]
+        );
+
+        if (!$subscriber) {
+            throw new \Exception('Invalid unsubscribe token');
+        }
+
+        $this->db->query(
+            "UPDATE newsletter SET status = 'unsubscribed' WHERE id = ?",
+            [$subscriber['id']]
+        );
+
+        return [
+            'email' => $subscriber['email'],
+            'status' => 'unsubscribed',
+            'message' => 'You\'ve been successfully unsubscribed from our newsletter.',
         ];
     }
 

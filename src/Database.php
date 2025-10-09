@@ -221,6 +221,15 @@ class Database {
                 $this->connection->exec("ALTER TABLE users ADD COLUMN registered_through_shop_id INTEGER");
             }
 
+            // Migration 11: Add unsubscribe token to newsletter
+            $newsletterColumns = $this->connection->query("PRAGMA table_info(newsletter)")->fetchAll();
+            $newsletterColumnNames = array_column($newsletterColumns, 'name');
+
+            if (!in_array('unsubscribe_token', $newsletterColumnNames)) {
+                $this->connection->exec("ALTER TABLE newsletter ADD COLUMN unsubscribe_token TEXT");
+                $this->connection->exec("CREATE UNIQUE INDEX IF NOT EXISTS idx_newsletter_unsubscribe_token ON newsletter(unsubscribe_token) WHERE unsubscribe_token IS NOT NULL");
+            }
+
         } catch (\Exception $e) {
             // Migration failed - log to file instead
             file_put_contents(__DIR__ . '/../database/migration_errors.log',
