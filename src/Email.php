@@ -516,11 +516,31 @@ HTML;
 
                 <!-- Footer : BEGIN -->
                 <tr>
-                    <td style="background: linear-gradient(135deg, rgba(155, 135, 245, 0.05), rgba(124, 106, 214, 0.03)); padding: 30px; text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; border-radius: 0 0 8px 8px;">
-                        <p style="margin: 0; font-size: 14px; line-height: 20px; color: #6b7280;">
+                    <td style="background: linear-gradient(135deg, rgba(155, 135, 245, 0.05), rgba(124, 106, 214, 0.03)); padding: 30px 30px 20px; text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+                        <p style="margin: 0 0 15px; font-size: 14px; line-height: 20px; color: #6b7280;">
                             <strong style="color: #4b5563;">Magicians News</strong> - Your Daily Dose of Magic<br>
                             <a href="{$this->appUrl}" style="color: #7c6ad6; text-decoration: none; font-weight: 600;">magicians.news</a>
                         </p>
+
+                        <!-- Legal Notice -->
+                        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-top: 20px;">
+                            <tr>
+                                <td style="padding: 20px 0 0; border-top: 1px solid rgba(155, 135, 245, 0.15);">
+                                    <p style="margin: 0 0 10px; font-size: 12px; line-height: 18px; color: #9ca3af;">
+                                        <strong style="color: #6b7280;">Please do not reply to this email.</strong><br>
+                                        This is an automated message from a notification-only address.
+                                    </p>
+                                    <p style="margin: 10px 0 0; font-size: 11px; line-height: 16px; color: #9ca3af;">
+                                        © 2025 Magicians News. All rights reserved.<br>
+                                        Magicians News and the 🎩 logo are trademarks of Magicians News.
+                                    </p>
+                                    <p style="margin: 10px 0 0; font-size: 10px; line-height: 15px; color: #9ca3af;">
+                                        You are receiving this email because you registered for an account at magicians.news.<br>
+                                        This transactional email was sent to secure your account.
+                                    </p>
+                                </td>
+                            </tr>
+                        </table>
                     </td>
                 </tr>
                 <!-- Footer : END -->
