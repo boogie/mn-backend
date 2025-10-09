@@ -1,31 +1,18 @@
 <?php
 namespace MagicianNews;
 
-use Aws\Ses\SesClient;
-use Aws\Exception\AwsException;
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 
 class Email {
     private string $fromEmail;
     private string $fromName;
     private string $appUrl;
-    private ?SesClient $sesClient = null;
 
     public function __construct() {
         $this->fromEmail = $_ENV['EMAIL_FROM'] ?? 'noreply@magicians.news';
         $this->fromName = $_ENV['EMAIL_FROM_NAME'] ?? 'Magicians News';
         $this->appUrl = $_ENV['APP_URL'] ?? 'https://magicians.news';
-
-        // Initialize AWS SES client if credentials are available
-        if (!empty($_ENV['AWS_ACCESS_KEY_ID']) && !empty($_ENV['AWS_SECRET_ACCESS_KEY'])) {
-            $this->sesClient = new SesClient([
-                'version' => 'latest',
-                'region' => $_ENV['AWS_REGION'] ?? 'eu-west-1',
-                'credentials' => [
-                    'key' => $_ENV['AWS_ACCESS_KEY_ID'],
-                    'secret' => $_ENV['AWS_SECRET_ACCESS_KEY'],
-                ],
-            ]);
-        }
     }
 
     /**
@@ -159,7 +146,7 @@ HTML;
     }
 
     /**
-     * Send email using AWS SES or fallback to logging in development
+     * Send email using AWS SES SMTP or fallback to logging in development
      */
     private function send(string $to, string $subject, string $html): bool {
         try {
@@ -169,13 +156,13 @@ HTML;
                 return true;
             }
 
-            // Use AWS SES in production
-            if ($this->sesClient !== null) {
-                return $this->sendViaSes($to, $subject, $html);
+            // Use AWS SES SMTP in production
+            if (!empty($_ENV['SMTP_HOST']) && !empty($_ENV['SMTP_USER']) && !empty($_ENV['SMTP_PASSWORD'])) {
+                return $this->sendViaSmtp($to, $subject, $html);
             }
 
-            // Fallback to PHP mail() if SES is not configured
-            error_log("AWS SES not configured, falling back to mail()");
+            // Fallback to PHP mail() if SMTP is not configured
+            error_log("SMTP not configured, falling back to mail()");
             $headers = [
                 'MIME-Version: 1.0',
                 'Content-type: text/html; charset=UTF-8',
@@ -190,35 +177,37 @@ HTML;
     }
 
     /**
-     * Send email via AWS SES
+     * Send email via AWS SES SMTP using PHPMailer
      */
-    private function sendViaSes(string $to, string $subject, string $html): bool {
+    private function sendViaSmtp(string $to, string $subject, string $html): bool {
         try {
-            $result = $this->sesClient->sendEmail([
-                'Source' => "{$this->fromName} <{$this->fromEmail}>",
-                'Destination' => [
-                    'ToAddresses' => [$to],
-                ],
-                'Message' => [
-                    'Subject' => [
-                        'Data' => $subject,
-                        'Charset' => 'UTF-8',
-                    ],
-                    'Body' => [
-                        'Html' => [
-                            'Data' => $html,
-                            'Charset' => 'UTF-8',
-                        ],
-                    ],
-                ],
-            ]);
+            $mail = new PHPMailer(true);
 
-            // Log successful send with message ID
-            error_log("Email sent successfully via SES. MessageId: " . $result->get('MessageId'));
+            // Server settings
+            $mail->isSMTP();
+            $mail->Host = $_ENV['SMTP_HOST'];
+            $mail->SMTPAuth = true;
+            $mail->Username = $_ENV['SMTP_USER'];
+            $mail->Password = $_ENV['SMTP_PASSWORD'];
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+            $mail->Port = (int)($_ENV['SMTP_PORT'] ?? 587);
+
+            // Recipients
+            $mail->setFrom($this->fromEmail, $this->fromName);
+            $mail->addAddress($to);
+
+            // Content
+            $mail->isHTML(true);
+            $mail->Subject = $subject;
+            $mail->Body = $html;
+            $mail->CharSet = 'UTF-8';
+
+            $mail->send();
+            error_log("Email sent successfully via SMTP to: $to");
             return true;
 
-        } catch (AwsException $e) {
-            error_log("AWS SES error: " . $e->getAwsErrorMessage());
+        } catch (Exception $e) {
+            error_log("SMTP error: " . $mail->ErrorInfo);
             return false;
         }
     }

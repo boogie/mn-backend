@@ -8,7 +8,8 @@
     "guzzlehttp/guzzle": "^7.8",
     "stripe/stripe-php": "^13.0",
     "league/oauth2-google": "^4.0",
-    "aws/aws-sdk-php": "^3.356"
+    "aws/aws-sdk-php": "^3.356",
+    "phpmailer/phpmailer": "^6.11"
   },
   "autoload": {
     "psr-4": {
