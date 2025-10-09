@@ -51,7 +51,6 @@ class Auth {
             $emailService = new Email();
             $emailService->sendVerificationEmail($email, $name, $verificationToken);
         } catch (\Exception $e) {
-            error_log("Failed to send verification email: " . $e->getMessage());
             // Don't fail registration if email sending fails
         }
 
@@ -206,13 +205,8 @@ class Auth {
         );
 
         // Send reset email
-        try {
-            $emailService = new Email();
-            $emailService->sendPasswordResetEmail($user['email'], $user['name'], $resetToken);
-        } catch (\Exception $e) {
-            error_log("Failed to send password reset email: " . $e->getMessage());
-            throw new \Exception("Failed to send password reset email");
-        }
+        $emailService = new Email();
+        $emailService->sendPasswordResetEmail($user['email'], $user['name'], $resetToken);
 
         return true;
     }

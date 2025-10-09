@@ -162,7 +162,6 @@ HTML;
             }
 
             // Fallback to PHP mail() if SMTP is not configured
-            error_log("SMTP not configured, falling back to mail()");
             $headers = [
                 'MIME-Version: 1.0',
                 'Content-type: text/html; charset=UTF-8',
@@ -171,7 +170,6 @@ HTML;
             ];
             return mail($to, $subject, $html, implode("\r\n", $headers));
         } catch (\Exception $e) {
-            error_log("Email send failed: " . $e->getMessage());
             return false;
         }
     }
@@ -216,14 +214,12 @@ HTML;
             // Clean output buffer
             ob_end_clean();
 
-            error_log("Email sent successfully via SMTP to: $to");
             return true;
 
         } catch (Exception $e) {
             // Clean output buffer on error too
             ob_end_clean();
 
-            error_log("SMTP error: " . $mail->ErrorInfo);
             return false;
         }
     }
