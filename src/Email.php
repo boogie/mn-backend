@@ -235,11 +235,14 @@ HTML;
             }
 
             // Fallback to PHP mail() if SMTP is not configured
+            $messageId = '<' . time() . '.' . uniqid() . '@' . parse_url($this->appUrl, PHP_URL_HOST) . '>';
             $headers = [
                 'MIME-Version: 1.0',
                 'Content-type: text/html; charset=UTF-8',
                 "From: {$this->fromName} <{$this->fromEmail}>",
                 "Reply-To: {$this->fromEmail}",
+                "Message-ID: {$messageId}",
+                "X-Entity-Ref-ID: " . uniqid('mn-', true),
             ];
             return mail($to, $subject, $html, implode("\r\n", $headers));
         } catch (\Exception $e) {
@@ -282,9 +285,11 @@ HTML;
             $mail->Body = $html;
             $mail->CharSet = 'UTF-8';
 
-            // Add unique Message-ID to prevent Gmail threading/caching issues
+            // Add unique Message-ID and other headers to prevent Gmail threading/caching issues
             $messageId = '<' . time() . '.' . uniqid() . '@' . parse_url($this->appUrl, PHP_URL_HOST) . '>';
-            $mail->addCustomHeader('Message-ID', $messageId);
+            $mail->MessageID = $messageId;
+            $mail->addCustomHeader('X-Entity-Ref-ID', uniqid('mn-', true));
+            // Ensure no threading by not setting In-Reply-To or References headers
 
             $mail->send();
 
