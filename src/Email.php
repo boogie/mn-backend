@@ -167,14 +167,14 @@ class Email {
                     <td style="background-color: #ffffff;">
                         <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
                             <tr>
-                                <td style="padding: 40px 30px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 16px; line-height: 24px; color: #4b5563;">
+                                <td style="padding: 40px 30px; background-color: #ffffff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 16px; line-height: 24px; color: #4b5563;">
                                     <h2 style="margin: 0 0 20px 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 18px; line-height: 24px; color: #1f2937; font-weight: 600;">{$greeting}</h2>
                                     <p style="margin: 0 0 20px;">{$body}</p>
                                     <p style="margin: 0 0 30px; color: #6b7280; font-size: 14px;">{$footer}</p>
                                 </td>
                             </tr>
                             <tr>
-                                <td style="padding: 0 30px 40px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 14px; line-height: 22px; color: #4b5563; border-top: 1px solid #e5e7eb;">
+                                <td style="padding: 0 30px 40px; background-color: #ffffff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 14px; line-height: 22px; color: #4b5563; border-top: 1px solid #e5e7eb;">
                                     <p style="margin: 30px 0 10px; font-size: 16px; color: #1f2937; font-weight: 600;">What to expect:</p>
                                     <p style="margin: 0;">• Launch announcement with early access pricing (€1/month)<br>• Exclusive content previews<br>• Founding member benefits</p>
                                 </td>
@@ -412,13 +412,13 @@ HTML;
                     <td style="background-color: #ffffff;">
                         <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
                             <tr>
-                                <td style="padding: 40px 30px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 16px; line-height: 24px; color: #4b5563;">
+                                <td style="padding: 40px 30px; background-color: #ffffff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 16px; line-height: 24px; color: #4b5563;">
                                     <h2 style="margin: 0 0 20px 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 18px; line-height: 24px; color: #1f2937; font-weight: 600;">{$greeting}</h2>
                                     <p style="margin: 0 0 30px;">{$body}</p>
                                 </td>
                             </tr>
                             <tr>
-                                <td style="padding: 0 30px 20px;">
+                                <td style="padding: 0 30px 20px; background-color: #ffffff;">
                                     <table align="center" role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin: auto;">
                                         <tr>
                                             <td style="border-radius: 8px; background: #7c6ad6; text-align: center;">
@@ -429,7 +429,7 @@ HTML;
                                 </td>
                             </tr>
                             <tr>
-                                <td style="padding: 20px 30px 40px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 14px; line-height: 20px; color: #6b7280;">
+                                <td style="padding: 20px 30px 40px; background-color: #ffffff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 14px; line-height: 20px; color: #6b7280;">
                                     <p style="margin: 0 0 15px;">{$footer}</p>
                                     <p style="margin: 0; font-size: 12px; color: #9ca3af;">Or copy and paste this link into your browser:<br><a href="{$buttonUrl}" style="color: #667eea; text-decoration: underline; word-break: break-all;">{$buttonUrl}</a></p>
                                 </td>
