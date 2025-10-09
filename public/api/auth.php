@@ -33,8 +33,13 @@ try {
                 );
                 Response::success($result, 'Login successful');
             } elseif ($action === 'forgot-password') {
-                $auth->requestPasswordReset($input['email'] ?? '');
-                Response::success(null, 'If an account exists with this email, a password reset link has been sent.');
+                try {
+                    $auth->requestPasswordReset($input['email'] ?? '');
+                    Response::success(null, 'If an account exists with this email, a password reset link has been sent.');
+                } catch (\Exception $e) {
+                    error_log("Password reset error: " . $e->getMessage() . "\nStack trace: " . $e->getTraceAsString());
+                    throw $e;
+                }
             } elseif ($action === 'reset-password') {
                 $auth->resetPassword(
                     $input['token'] ?? '',
