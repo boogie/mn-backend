@@ -282,6 +282,10 @@ HTML;
             $mail->Body = $html;
             $mail->CharSet = 'UTF-8';
 
+            // Add unique Message-ID to prevent Gmail threading/caching issues
+            $messageId = '<' . time() . '.' . uniqid() . '@' . parse_url($this->appUrl, PHP_URL_HOST) . '>';
+            $mail->addCustomHeader('Message-ID', $messageId);
+
             $mail->send();
 
             // Clean output buffer
