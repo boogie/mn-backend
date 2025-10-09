@@ -412,13 +412,13 @@ HTML;
                     <td style="background-color: #ffffff;">
                         <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
                             <tr>
-                                <td style="padding: 40px 30px 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 16px; line-height: 24px; color: #4b5563;">
+                                <td style="padding: 40px 30px 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 16px; line-height: 24px; color: #4b5563; background-color: #ffffff;">
                                     <h2 style="margin: 0 0 20px 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 18px; line-height: 24px; color: #1f2937; font-weight: 600;">{$greeting}</h2>
                                     <p style="margin: 0;">{$body}</p>
                                 </td>
                             </tr>
                             <tr>
-                                <td style="padding: 0 30px;">
+                                <td style="padding: 0 30px; background-color: #ffffff;">
                                     <!-- Button : BEGIN -->
                                     <table align="center" role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin: auto;">
                                         <tr>
@@ -431,7 +431,7 @@ HTML;
                                 </td>
                             </tr>
                             <tr>
-                                <td style="padding: 20px 30px 40px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 14px; line-height: 20px; color: #6b7280;">
+                                <td style="padding: 20px 30px 40px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 14px; line-height: 20px; color: #6b7280; background-color: #ffffff;">
                                     <p style="margin: 0 0 15px;">{$footer}</p>
                                     <p style="margin: 0; font-size: 12px; color: #9ca3af;">Or copy and paste this link into your browser:<br><a href="{$buttonUrl}" style="color: #667eea; text-decoration: underline; word-break: break-all;">{$buttonUrl}</a></p>
                                 </td>
