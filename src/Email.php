@@ -331,142 +331,210 @@ HTML;
         string $footer
     ): string {
         return <<<HTML
-<!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="x-apple-disable-message-reformatting">
-    <meta name="format-detection" content="telephone=no,address=no,email=no,date=no,url=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="x-apple-disable-message-reformatting" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <title>{$title}</title>
+    <style type="text/css" rel="stylesheet" media="all">
+    body {
+      width: 100% !important;
+      height: 100%;
+      margin: 0;
+      -webkit-text-size-adjust: none;
+      background-color: #F2F4F6;
+      color: #51545E;
+    }
+
+    body, td, th {
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    }
+
+    h1 {
+      margin-top: 0;
+      color: #333333;
+      font-size: 22px;
+      font-weight: bold;
+      text-align: left;
+    }
+
+    p {
+      margin: .4em 0 1.1875em;
+      font-size: 16px;
+      line-height: 1.625;
+      color: #51545E;
+    }
+
+    p.sub {
+      font-size: 13px;
+    }
+
+    a {
+      color: #3869D4;
+    }
+
+    .button {
+      background-color: #7c6ad6;
+      border-top: 10px solid #7c6ad6;
+      border-right: 18px solid #7c6ad6;
+      border-bottom: 10px solid #7c6ad6;
+      border-left: 18px solid #7c6ad6;
+      display: inline-block;
+      color: #FFF;
+      text-decoration: none;
+      border-radius: 3px;
+      box-shadow: 0 2px 3px rgba(0, 0, 0, 0.16);
+      -webkit-text-size-adjust: none;
+      box-sizing: border-box;
+    }
+
+    .email-wrapper {
+      width: 100%;
+      margin: 0;
+      padding: 0;
+      background-color: #F2F4F6;
+    }
+
+    .email-content {
+      width: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
+    .email-masthead {
+      padding: 25px 0;
+      text-align: center;
+    }
+
+    .email-masthead_name {
+      font-size: 16px;
+      font-weight: bold;
+      color: #A8AAAF;
+      text-decoration: none;
+    }
+
+    .email-body {
+      width: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
+    .email-body_inner {
+      width: 570px;
+      margin: 0 auto;
+      padding: 0;
+      background-color: #FFFFFF;
+    }
+
+    .email-footer {
+      width: 570px;
+      margin: 0 auto;
+      padding: 0;
+      text-align: center;
+    }
+
+    .email-footer p {
+      color: #A8AAAF;
+    }
+
+    .body-action {
+      width: 100%;
+      margin: 30px auto;
+      padding: 0;
+      text-align: center;
+    }
+
+    .body-sub {
+      margin-top: 25px;
+      padding-top: 25px;
+      border-top: 1px solid #EAEAEC;
+    }
+
+    .content-cell {
+      padding: 45px;
+    }
+
+    @media only screen and (max-width: 600px) {
+      .email-body_inner,
+      .email-footer {
+        width: 100% !important;
+      }
+    }
+    </style>
     <!--[if mso]>
-    <style>
-        * { font-family: sans-serif !important; }
+    <style type="text/css">
+      .f-fallback  {
+        font-family: Arial, sans-serif;
+      }
     </style>
     <![endif]-->
-    <style>
-        html, body {
-            margin: 0 auto !important;
-            padding: 0 !important;
-            height: 100% !important;
-            width: 100% !important;
-            background: #f3f4f6;
-        }
-        * {
-            -ms-text-size-adjust: 100%;
-            -webkit-text-size-adjust: 100%;
-        }
-        div[style*="margin: 16px 0"] {
-            margin: 0 !important;
-        }
-        table, td {
-            mso-table-lspace: 0pt !important;
-            mso-table-rspace: 0pt !important;
-        }
-        table {
-            border-spacing: 0 !important;
-            border-collapse: collapse !important;
-            table-layout: fixed !important;
-            margin: 0 auto !important;
-        }
-        img {
-            -ms-interpolation-mode: bicubic;
-        }
-        a {
-            text-decoration: none;
-        }
-        .email-container {
-            max-width: 600px;
-            margin: 0 auto;
-        }
-    </style>
 </head>
-<body width="100%" style="margin: 0; padding: 0 !important; mso-line-height-rule: exactly; background-color: #f3f4f6;">
-    <center style="width: 100%; background-color: #f3f4f6;">
-        <!--[if mso | IE]>
-        <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #f3f4f6;">
-        <tr>
-        <td>
-        <![endif]-->
-
-        <div style="max-width: 600px; margin: 0 auto;" class="email-container">
-            <!--[if mso]>
-            <table align="center" role="presentation" cellspacing="0" cellpadding="0" border="0" width="600">
+<body style="width: 100% !important; height: 100%; margin: 0; -webkit-text-size-adjust: none; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #F2F4F6; color: #51545E;">
+    <table class="email-wrapper" width="100%" cellpadding="0" cellspacing="0" role="presentation" style="width: 100%; background-color: #F2F4F6; margin: 0; padding: 0;" bgcolor="#F2F4F6">
+      <tr>
+        <td align="center" style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 16px;">
+          <table class="email-content" width="100%" cellpadding="0" cellspacing="0" role="presentation" style="width: 100%; margin: 0; padding: 0;">
             <tr>
-            <td>
-            <![endif]-->
-
-            <table align="center" role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin: auto;">
-
-                <!-- Header : BEGIN -->
-                <tr>
-                    <td style="background-color: #667eea; padding: 40px 30px; text-align: center;">
-                        <h1 style="margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 28px; line-height: 34px; color: #ffffff; font-weight: 700;">🎩 Magicians News</h1>
-                    </td>
-                </tr>
-                <!-- Header : END -->
-
-                <!-- Content : BEGIN -->
-                <tr>
-                    <td style="background-color: #ffffff;">
-                        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
-                            <tr>
-                                <td style="padding: 40px 30px 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 16px; line-height: 24px; color: #4b5563;">
-                                    <h2 style="margin: 0 0 20px 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 18px; line-height: 24px; color: #1f2937; font-weight: 600;">{$greeting}</h2>
-                                    {$body}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="padding: 0 30px;">
-                                    <!-- Button : BEGIN -->
-                                    <table align="center" role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin: auto;">
-                                        <tr>
-                                            <td style="border-radius: 8px; background: #7c6ad6;">
-                                                <a href="{$buttonUrl}" style="background: #7c6ad6; border: 1px solid #7c6ad6; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 16px; line-height: 16px; text-decoration: none; padding: 16px 32px; color: #ffffff; display: block; border-radius: 8px; font-weight: 700;">{$buttonText}</a>
-                                            </td>
-                                        </tr>
-                                    </table>
-                                    <!-- Button : END -->
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="padding: 20px 30px 40px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 14px; line-height: 20px; color: #6b7280;">
-                                    {$footer}<br><br>
-                                    <span style="font-size: 12px; color: #9ca3af;">Or copy and paste this link into your browser:<br><a href="{$buttonUrl}" style="color: #667eea; text-decoration: underline; word-break: break-all;">{$buttonUrl}</a></span>
-                                </td>
-                            </tr>
-                        </table>
-                    </td>
-                </tr>
-                <!-- Content : END -->
-
-                <!-- Footer : BEGIN -->
-                <tr>
-                    <td style="background-color: #f9fafb; padding: 30px; text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
-                        <p style="margin: 0; font-size: 14px; line-height: 20px; color: #6b7280;">
-                            Magicians News - Your Daily Dose of Magic<br>
-                            <a href="{$this->appUrl}" style="color: #667eea; text-decoration: none;">magicians.news</a>
-                        </p>
-                    </td>
-                </tr>
-                <!-- Footer : END -->
-
-            </table>
-
-            <!--[if mso]>
-            </td>
+              <td class="email-masthead" style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 16px; text-align: center; padding: 25px 0;" align="center">
+                <a href="{$this->appUrl}" class="email-masthead_name" style="color: #667eea; font-size: 20px; font-weight: bold; text-decoration: none;">
+                🎩 Magicians News
+                </a>
+              </td>
             </tr>
-            </table>
-            <![endif]-->
-        </div>
-
-        <!--[if mso | IE]>
+            <tr>
+              <td class="email-body" width="570" cellpadding="0" cellspacing="0" style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 16px; width: 100%; margin: 0; padding: 0;">
+                <table class="email-body_inner" align="center" width="570" cellpadding="0" cellspacing="0" role="presentation" style="width: 570px; background-color: #FFFFFF; margin: 0 auto; padding: 0;" bgcolor="#FFFFFF">
+                  <tr>
+                    <td class="content-cell" style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 16px; padding: 45px;">
+                      <h1 style="margin-top: 0; color: #333333; font-size: 22px; font-weight: bold; text-align: left;" align="left">{$greeting}</h1>
+                      <p style="font-size: 16px; line-height: 1.625; color: #51545E; margin: .4em 0 1.1875em;">{$body}</p>
+                      <table class="body-action" align="center" width="100%" cellpadding="0" cellspacing="0" role="presentation" style="width: 100%; text-align: center; margin: 30px auto; padding: 0;">
+                        <tr>
+                          <td align="center" style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 16px;">
+                            <table width="100%" border="0" cellspacing="0" cellpadding="0" role="presentation">
+                              <tr>
+                                <td align="center" style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 16px;">
+                                  <a href="{$buttonUrl}" class="button" target="_blank" style="color: #FFF; background-color: #7c6ad6; display: inline-block; text-decoration: none; border-radius: 3px; box-shadow: 0 2px 3px rgba(0, 0, 0, 0.16); -webkit-text-size-adjust: none; box-sizing: border-box; border-color: #7c6ad6; border-style: solid; border-width: 10px 18px;">{$buttonText}</a>
+                                </td>
+                              </tr>
+                            </table>
+                          </td>
+                        </tr>
+                      </table>
+                      <p style="font-size: 16px; line-height: 1.625; color: #51545E; margin: .4em 0 1.1875em;">{$footer}</p>
+                      <table class="body-sub" role="presentation" style="margin-top: 25px; padding-top: 25px; border-top: 1px solid #EAEAEC;">
+                        <tr>
+                          <td style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 16px;">
+                            <p class="sub" style="font-size: 13px; line-height: 1.625; color: #51545E; margin: .4em 0 1.1875em;">If you're having trouble with the button above, copy and paste the URL below into your web browser.</p>
+                            <p class="sub" style="font-size: 13px; line-height: 1.625; color: #51545E; margin: .4em 0 1.1875em;">{$buttonUrl}</p>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+            <tr>
+              <td style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 16px;">
+                <table class="email-footer" align="center" width="570" cellpadding="0" cellspacing="0" role="presentation" style="width: 570px; text-align: center; margin: 0 auto; padding: 0;">
+                  <tr>
+                    <td class="content-cell" align="center" style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 16px; padding: 45px;">
+                      <p class="sub align-center" style="font-size: 13px; line-height: 1.625; text-align: center; color: #A8AAAF; margin: .4em 0 1.1875em;" align="center">
+                        Magicians News - Your Daily Dose of Magic
+                        <br /><a href="{$this->appUrl}" style="color: #3869D4;">magicians.news</a>
+                      </p>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
         </td>
-        </tr>
-        </table>
-        <![endif]-->
-    </center>
+      </tr>
+    </table>
 </body>
 </html>
 HTML;
