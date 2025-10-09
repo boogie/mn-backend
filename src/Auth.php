@@ -181,11 +181,28 @@ class Auth {
     }
 
     /**
+     * Generate a short, human-friendly token (6 characters)
+     * Excludes similar-looking characters: 0,O,1,I,l,5,S
+     */
+    private function generateShortToken(): string {
+        // Safe characters: no 0/O, 1/I/l, 5/S confusion
+        $chars = '234679ABCDEFGHJKMNPQRTUVWXYZ';
+        $token = '';
+        $max = strlen($chars) - 1;
+        
+        for ($i = 0; $i < 6; $i++) {
+            $token .= $chars[random_int(0, $max)];
+        }
+        
+        return $token;
+    }
+
+    /**
      * Request password reset - sends email with reset token
      */
     public function requestPasswordReset(string $email): bool {
         $user = $this->db->fetchOne(
-            "SELECT id, email, name FROM users WHERE email = ?",
+            "SELECT id, email, name, password_reset_token, password_reset_expires FROM users WHERE email = ?",
             [$email]
         );
 
@@ -194,9 +211,23 @@ class Auth {
             return true;
         }
 
-        // Generate reset token
-        $resetToken = bin2hex(random_bytes(32));
-        $expires = date('Y-m-d H:i:s', time() + 3600); // 1 hour
+        // Check if there's a valid existing token
+        $resetToken = null;
+        if ($user['password_reset_token'] && $user['password_reset_expires']) {
+            $expiresTime = strtotime($user['password_reset_expires']);
+            if ($expiresTime > time()) {
+                // Reuse existing valid token and extend expiration
+                $resetToken = $user['password_reset_token'];
+            }
+        }
+
+        // Generate new short token only if no valid token exists
+        if (!$resetToken) {
+            $resetToken = $this->generateShortToken();
+        }
+
+        // Set/extend expiration to 1 hour from now
+        $expires = date('Y-m-d H:i:s', time() + 3600);
 
         // Store token
         $this->db->query(
@@ -204,7 +235,7 @@ class Auth {
             [$resetToken, $expires, $user['id']]
         );
 
-        // Send reset email
+        // Send reset email (will have same URL if token was reused)
         $emailService = new Email();
         $emailService->sendPasswordResetEmail($user['email'], $user['name'], $resetToken);
 
