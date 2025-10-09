@@ -282,6 +282,9 @@ HTML;
             $mail->Body = $html;
             $mail->CharSet = 'UTF-8';
 
+            // Disable AWS SES link and open tracking
+            $mail->addCustomHeader('X-SES-CONFIGURATION-SET', '');
+
             $mail->send();
 
             // Clean output buffer
