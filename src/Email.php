@@ -100,7 +100,7 @@ class Email {
                 <table role="presentation" align="center" width="600" cellpadding="0" cellspacing="0" border="0" style="margin: 0 auto; max-width: 600px; background-color: #ffffff; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
                     <!-- Header -->
                     <tr>
-                        <td style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px; text-align: center; border-radius: 12px 12px 0 0;">
+                        <td style="background-color: #667eea; padding: 40px; text-align: center; border-radius: 12px 12px 0 0;">
                             <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 700;">🎩 Magicians News</h1>
                         </td>
                     </tr>
@@ -268,7 +268,7 @@ HTML;
                 <table role="presentation" align="center" width="600" cellpadding="0" cellspacing="0" border="0" style="margin: 0 auto; max-width: 600px; background-color: #ffffff; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
                     <!-- Header -->
                     <tr>
-                        <td style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px; text-align: center; border-radius: 12px 12px 0 0;">
+                        <td style="background-color: #667eea; padding: 40px; text-align: center; border-radius: 12px 12px 0 0;">
                             <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 700;">🎩 Magicians News</h1>
                         </td>
                     </tr>
@@ -281,7 +281,7 @@ HTML;
                             <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
                                 <tr>
                                     <td align="center" style="padding: 20px 0;">
-                                        <a href="{$buttonUrl}" style="display: inline-block; background: linear-gradient(180deg, #9b87f5, #7c6ad6); color: #ffffff; text-decoration: none; padding: 16px 32px; border-radius: 8px; font-size: 16px; font-weight: 700; box-shadow: 0 4px 12px rgba(124, 106, 214, 0.3);">{$buttonText}</a>
+                                        <a href="{$buttonUrl}" style="display: inline-block; background-color: #7c6ad6; color: #ffffff; text-decoration: none; padding: 16px 32px; border-radius: 8px; font-size: 16px; font-weight: 700; box-shadow: 0 4px 12px rgba(124, 106, 214, 0.3);">{$buttonText}</a>
                                     </td>
                                 </tr>
                             </table>
