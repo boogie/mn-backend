@@ -531,8 +531,7 @@ HTML;
                                         This is an automated message from a notification-only address.
                                     </p>
                                     <p style="margin: 10px 0 0; font-size: 11px; line-height: 16px; color: #9ca3af;">
-                                        © 2025 Magicians News. All rights reserved.<br>
-                                        Magicians News and the 🎩 logo are trademarks of Magicians News.
+                                        © 2025 Magicians News. All rights reserved.
                                     </p>
                                     <p style="margin: 10px 0 0; font-size: 10px; line-height: 15px; color: #9ca3af;">
                                         You are receiving this email because you registered for an account at magicians.news.<br>
