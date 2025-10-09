@@ -183,23 +183,37 @@ class Auth {
 
     /**
      * Generate a short, human-friendly token (6 characters)
-     * Excludes similar-looking characters: 0,O,1,I,l,5,S
+     *
+     * GMAIL THREADING FIX (2025-10-09):
+     * Switched from 64-character hex tokens to 6-character alphanumeric tokens for better UX.
+     * The short tokens work with Email.php's anti-threading mechanism:
+     * - Same token within 1 hour = same Message-ID = proper Gmail threading
+     * - Different tokens = different Message-IDs = separate email threads
+     *
+     * Excludes similar-looking characters: 0,O,1,I,l,5,S to prevent user confusion.
      */
     private function generateShortToken(): string {
         // Safe characters: no 0/O, 1/I/l, 5/S confusion
         $chars = '234679ABCDEFGHJKMNPQRTUVWXYZ';
         $token = '';
         $max = strlen($chars) - 1;
-        
+
         for ($i = 0; $i < 6; $i++) {
             $token .= $chars[random_int(0, $max)];
         }
-        
+
         return $token;
     }
 
     /**
      * Request password reset - sends email with reset token
+     *
+     * TOKEN REUSE STRATEGY (2025-10-09):
+     * If a valid unexpired token already exists, we reuse it instead of generating a new one.
+     * This creates a better user experience:
+     * - Multiple password reset requests = same URL = user won't get confused by different links
+     * - Works with Gmail threading fix in Email.php: same token = same Message-ID = proper threading
+     * - Prevents token confusion: user sees consistent reset link across multiple emails
      */
     public function requestPasswordReset(string $email): bool {
         $user = $this->db->fetchOne(
@@ -212,12 +226,12 @@ class Auth {
             return true;
         }
 
-        // Check if there's a valid existing token
+        // Check if there's a valid existing token - REUSE it if found
         $resetToken = null;
         if ($user['password_reset_token'] && $user['password_reset_expires']) {
             $expiresTime = strtotime($user['password_reset_expires']);
             if ($expiresTime > time()) {
-                // Reuse existing valid token and extend expiration
+                // Reuse existing valid token - this maintains consistent URLs and Message-IDs
                 $resetToken = $user['password_reset_token'];
             }
         }
@@ -230,13 +244,13 @@ class Auth {
         // Set/extend expiration to 1 hour from now
         $expires = date('Y-m-d H:i:s', time() + 3600);
 
-        // Store token
+        // Store token (update expiration even if reusing token)
         $this->db->query(
             "UPDATE users SET password_reset_token = ?, password_reset_expires = ? WHERE id = ?",
             [$resetToken, $expires, $user['id']]
         );
 
-        // Send reset email (will have same URL if token was reused)
+        // Send reset email (will have same URL and Message-ID if token was reused)
         $emailService = new Email();
         $emailService->sendPasswordResetEmail($user['email'], $user['name'], $resetToken);
 
