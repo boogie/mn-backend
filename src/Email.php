@@ -411,7 +411,27 @@ HTML;
             max-width: 600px;
             margin: 0 auto;
         }
+        /* Gradient styles matching portal design */
+        .gradient-header {
+            background: #7c6ad6; /* Fallback for email clients that don't support gradients */
+            background: linear-gradient(135deg, #9b87f5 0%, #7c6ad6 100%);
+        }
+        .gradient-button {
+            background: #7c6ad6; /* Fallback */
+            background: linear-gradient(180deg, #9b87f5, #7c6ad6);
+        }
     </style>
+    <!--[if gte mso 9]>
+    <style>
+        /* Outlook-specific gradient fallback using solid colors */
+        .gradient-header {
+            background: #7c6ad6 !important;
+        }
+        .gradient-button {
+            background: #7c6ad6 !important;
+        }
+    </style>
+    <![endif]-->
 </head>
 <body width="100%" style="margin: 0; padding: 0 !important; mso-line-height-rule: exactly; background-color: #f3f4f6;">
     <center style="width: 100%; background-color: #f3f4f6;">
@@ -432,15 +452,25 @@ HTML;
 
                 <!-- Header : BEGIN -->
                 <tr>
-                    <td style="background-color: #667eea; padding: 40px 30px; text-align: center;">
-                        <h1 style="margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 28px; line-height: 34px; color: #ffffff; font-weight: 700;">🎩 Magicians News</h1>
+                    <td class="gradient-header" style="background: linear-gradient(135deg, #9b87f5 0%, #7c6ad6 100%); padding: 50px 30px; text-align: center;">
+                        <!--[if gte mso 9]>
+                        <v:rect xmlns:v="urn:schemas-microsoft-com:vml" fill="true" stroke="false" style="width:600px;height:128px;">
+                        <v:fill type="gradient" color="#7c6ad6" color2="#9b87f5" angle="135" />
+                        <v:textbox inset="0,0,0,0">
+                        <![endif]-->
+                        <h1 style="margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 32px; line-height: 38px; color: #ffffff; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.1);">🎩 Magicians News</h1>
+                        <p style="margin: 8px 0 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 14px; color: rgba(255,255,255,0.9);">Your Daily Dose of Magic</p>
+                        <!--[if gte mso 9]>
+                        </v:textbox>
+                        </v:rect>
+                        <![endif]-->
                     </td>
                 </tr>
                 <!-- Header : END -->
 
                 <!-- Content : BEGIN -->
                 <tr>
-                    <td style="background-color: #ffffff;">
+                    <td style="background-color: #ffffff; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);">
                         <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
                             <tr>
                                 <td style="padding: 40px 30px 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 16px; line-height: 24px; color: #4b5563;">
@@ -453,8 +483,17 @@ HTML;
                                     <!-- Button : BEGIN -->
                                     <table align="center" role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin: auto;">
                                         <tr>
-                                            <td style="border-radius: 8px; background: #7c6ad6;">
-                                                <a href="{$buttonUrl}" style="background: #7c6ad6; border: 1px solid #7c6ad6; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 16px; line-height: 16px; text-decoration: none; padding: 16px 32px; color: #ffffff; display: block; border-radius: 8px; font-weight: 700;">{$buttonText}</a>
+                                            <td class="gradient-button" style="border-radius: 8px; background: linear-gradient(180deg, #9b87f5, #7c6ad6); box-shadow: 0 4px 12px rgba(124, 106, 214, 0.3);">
+                                                <!--[if gte mso 9]>
+                                                <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="{$buttonUrl}" style="height:48px;v-text-anchor:middle;width:200px;" arcsize="17%" stroke="f" fillcolor="#7c6ad6">
+                                                <w:anchorlock/>
+                                                <center>
+                                                <![endif]-->
+                                                <a href="{$buttonUrl}" style="background: linear-gradient(180deg, #9b87f5, #7c6ad6); border: none; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 16px; line-height: 16px; text-decoration: none; padding: 16px 40px; color: #ffffff; display: inline-block; border-radius: 8px; font-weight: 700; box-shadow: 0 4px 12px rgba(124, 106, 214, 0.3);">{$buttonText}</a>
+                                                <!--[if gte mso 9]>
+                                                </center>
+                                                </v:roundrect>
+                                                <![endif]-->
                                             </td>
                                         </tr>
                                     </table>
@@ -463,8 +502,11 @@ HTML;
                             </tr>
                             <tr>
                                 <td style="padding: 20px 30px 40px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 14px; line-height: 20px; color: #6b7280;">
-                                    <p style="margin: 0 0 15px;">{$footer}</p>
-                                    <p style="margin: 0; font-size: 12px; color: #9ca3af;">Or copy and paste this link into your browser:<br><a href="{$buttonUrl}" style="color: #667eea; text-decoration: underline; word-break: break-all;">{$buttonUrl}</a></p>
+                                    <p style="margin: 0 0 20px;">{$footer}</p>
+                                    <div style="background: linear-gradient(135deg, rgba(155, 135, 245, 0.08), rgba(124, 106, 214, 0.08)); border-left: 3px solid #9b87f5; padding: 15px; border-radius: 6px; margin-top: 20px;">
+                                        <p style="margin: 0; font-size: 12px; color: #6b7280;">Or copy and paste this link into your browser:</p>
+                                        <p style="margin: 8px 0 0; font-size: 12px;"><a href="{$buttonUrl}" style="color: #7c6ad6; text-decoration: none; word-break: break-all;">{$buttonUrl}</a></p>
+                                    </div>
                                 </td>
                             </tr>
                         </table>
@@ -474,10 +516,10 @@ HTML;
 
                 <!-- Footer : BEGIN -->
                 <tr>
-                    <td style="background-color: #f9fafb; padding: 30px; text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+                    <td style="background: linear-gradient(135deg, rgba(155, 135, 245, 0.05), rgba(124, 106, 214, 0.03)); padding: 30px; text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; border-radius: 0 0 8px 8px;">
                         <p style="margin: 0; font-size: 14px; line-height: 20px; color: #6b7280;">
-                            Magicians News - Your Daily Dose of Magic<br>
-                            <a href="{$this->appUrl}" style="color: #667eea; text-decoration: none;">magicians.news</a>
+                            <strong style="color: #4b5563;">Magicians News</strong> - Your Daily Dose of Magic<br>
+                            <a href="{$this->appUrl}" style="color: #7c6ad6; text-decoration: none; font-weight: 600;">magicians.news</a>
                         </p>
                     </td>
                 </tr>
