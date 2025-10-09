@@ -41,7 +41,8 @@ class Email {
     public function sendPasswordResetEmail(string $toEmail, string $name, string $token): bool {
         $resetUrl = $this->appUrl . '/reset-password?token=' . urlencode($token);
 
-        $subject = 'Reset your password - Magicians News';
+        // Add token to subject to make each email unique (prevents Gmail threading/duplicate suppression)
+        $subject = "Reset your password [{$token}] - Magicians News";
 
         $html = $this->getEmailTemplate(
             'Reset Your Password',
@@ -52,7 +53,9 @@ class Email {
             "This link will expire in 1 hour. If you didn't request a password reset, you can safely ignore this email."
         );
 
-        return $this->send($toEmail, $subject, $html);
+        // Use MD5 of token for stable, unique Message-ID
+        $messageId = '<reset-' . md5($token) . '@' . parse_url($this->appUrl, PHP_URL_HOST) . '>';
+        return $this->send($toEmail, $subject, $html, $messageId);
     }
 
     /**
@@ -221,7 +224,7 @@ HTML;
     /**
      * Send email using AWS SES SMTP or fallback to logging in development
      */
-    private function send(string $to, string $subject, string $html): bool {
+    private function send(string $to, string $subject, string $html, ?string $customMessageId = null): bool {
         try {
             // For development, just log the email instead of sending
             if ($_ENV['APP_ENV'] === 'development' || empty($_ENV['EMAIL_ENABLED'])) {
@@ -231,18 +234,18 @@ HTML;
 
             // Use AWS SES SMTP in production
             if (!empty($_ENV['SMTP_HOST']) && !empty($_ENV['SMTP_USER']) && !empty($_ENV['SMTP_PASSWORD'])) {
-                return $this->sendViaSmtp($to, $subject, $html);
+                return $this->sendViaSmtp($to, $subject, $html, $customMessageId);
             }
 
             // Fallback to PHP mail() if SMTP is not configured
-            $messageId = '<' . time() . '.' . uniqid() . '@' . parse_url($this->appUrl, PHP_URL_HOST) . '>';
+            $messageId = $customMessageId ?? '<' . time() . '.' . uniqid() . '@' . parse_url($this->appUrl, PHP_URL_HOST) . '>';
             $headers = [
                 'MIME-Version: 1.0',
                 'Content-type: text/html; charset=UTF-8',
                 "From: {$this->fromName} <{$this->fromEmail}>",
                 "Reply-To: {$this->fromEmail}",
                 "Message-ID: {$messageId}",
-                "X-Entity-Ref-ID: " . uniqid('mn-', true),
+                "X-Entity-Ref-ID: " . ($customMessageId ? md5($customMessageId) : uniqid('mn-', true)),
             ];
             return mail($to, $subject, $html, implode("\r\n", $headers));
         } catch (\Exception $e) {
@@ -253,7 +256,7 @@ HTML;
     /**
      * Send email via AWS SES SMTP using PHPMailer
      */
-    private function sendViaSmtp(string $to, string $subject, string $html): bool {
+    private function sendViaSmtp(string $to, string $subject, string $html, ?string $customMessageId = null): bool {
         // Start output buffering to prevent any output from PHPMailer
         ob_start();
 
@@ -285,10 +288,10 @@ HTML;
             $mail->Body = $html;
             $mail->CharSet = 'UTF-8';
 
-            // Add unique Message-ID and other headers to prevent Gmail threading/caching issues
-            $messageId = '<' . time() . '.' . uniqid() . '@' . parse_url($this->appUrl, PHP_URL_HOST) . '>';
+            // Add Message-ID - use custom if provided (for password resets), otherwise generate unique
+            $messageId = $customMessageId ?? '<' . time() . '.' . uniqid() . '@' . parse_url($this->appUrl, PHP_URL_HOST) . '>';
             $mail->MessageID = $messageId;
-            $mail->addCustomHeader('X-Entity-Ref-ID', uniqid('mn-', true));
+            $mail->addCustomHeader('X-Entity-Ref-ID', $customMessageId ? md5($customMessageId) : uniqid('mn-', true));
             // Ensure no threading by not setting In-Reply-To or References headers
 
             $mail->send();
