@@ -180,8 +180,17 @@ HTML;
      * Send email via AWS SES SMTP using PHPMailer
      */
     private function sendViaSmtp(string $to, string $subject, string $html): bool {
+        // Start output buffering to prevent any output from PHPMailer
+        ob_start();
+
         try {
             $mail = new PHPMailer(true);
+
+            // Disable debug output completely
+            $mail->SMTPDebug = 0;
+            $mail->Debugoutput = function($str, $level) {
+                // Suppress all debug output
+            };
 
             // Server settings
             $mail->isSMTP();
@@ -203,10 +212,17 @@ HTML;
             $mail->CharSet = 'UTF-8';
 
             $mail->send();
+
+            // Clean output buffer
+            ob_end_clean();
+
             error_log("Email sent successfully via SMTP to: $to");
             return true;
 
         } catch (Exception $e) {
+            // Clean output buffer on error too
+            ob_end_clean();
+
             error_log("SMTP error: " . $mail->ErrorInfo);
             return false;
         }
