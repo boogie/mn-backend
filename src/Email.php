@@ -94,20 +94,25 @@ class Email {
     <title>{$title}</title>
 </head>
 <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f3f4f6;">
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f3f4f6;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f3f4f6; min-height: 100vh;">
         <tr>
-            <td align="center" style="padding: 40px 20px;">
-                <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; background-color: #ffffff; border: 1px solid #e5e7eb;">
+            <td align="center" style="padding: 40px 15px;">
+                <!--[if mso]>
+                <table align="center" width="600" cellpadding="0" cellspacing="0" border="0" style="width:600px;">
+                <tr>
+                <td>
+                <![endif]-->
+                <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; width: 100%; background-color: #ffffff;">
                     <!-- Header -->
                     <tr>
-                        <td style="background-color: #667eea; padding: 40px; text-align: center;">
-                            <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 700;">🎩 Magicians News</h1>
+                        <td style="background-color: #667eea; padding: 40px 30px; text-align: center;">
+                            <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 700; line-height: 1.2;">🎩 Magicians News</h1>
                         </td>
                     </tr>
                     <!-- Content -->
                     <tr>
-                        <td style="padding: 40px; background-color: #ffffff;">
-                            <p style="margin: 0 0 20px; font-size: 18px; color: #1f2937; font-weight: 600;">{$greeting}</p>
+                        <td style="padding: 40px 30px; background-color: #ffffff;">
+                            <p style="margin: 0 0 20px; font-size: 18px; color: #1f2937; font-weight: 600; line-height: 1.4;">{$greeting}</p>
                             <p style="margin: 0 0 30px; font-size: 16px; line-height: 1.6; color: #4b5563;">{$body}</p>
                             <p style="margin: 30px 0 0; font-size: 14px; line-height: 1.6; color: #6b7280;">{$footer}</p>
                             <div style="margin-top: 30px; padding-top: 30px; border-top: 1px solid #e5e7eb;">
@@ -122,17 +127,22 @@ class Email {
                     </tr>
                     <!-- Footer -->
                     <tr>
-                        <td style="background-color: #f9fafb; padding: 30px; text-align: center;">
-                            <p style="margin: 0 0 10px; font-size: 14px; color: #6b7280;">
+                        <td style="background-color: #f9fafb; padding: 30px; text-align: center; border-top: 1px solid #e5e7eb;">
+                            <p style="margin: 0 0 10px; font-size: 14px; color: #6b7280; line-height: 1.5;">
                                 Magicians News - Your Daily Dose of Magic<br>
                                 <a href="{$this->appUrl}" style="color: #667eea; text-decoration: none;">magicians.news</a>
                             </p>
-                            <p style="margin: 10px 0 0; font-size: 12px; color: #9ca3af;">
+                            <p style="margin: 10px 0 0; font-size: 12px; color: #9ca3af; line-height: 1.5;">
                                 Don't want to receive these emails? <a href="{$unsubscribeUrl}" style="color: #667eea; text-decoration: underline;">Unsubscribe</a>
                             </p>
                         </td>
                     </tr>
                 </table>
+                <!--[if mso]>
+                </td>
+                </tr>
+                </table>
+                <![endif]-->
             </td>
         </tr>
     </table>
@@ -262,47 +272,63 @@ HTML;
     <title>{$title}</title>
 </head>
 <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f3f4f6;">
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f3f4f6;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f3f4f6; min-height: 100vh;">
         <tr>
-            <td align="center" style="padding: 40px 20px;">
-                <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; background-color: #ffffff; border: 1px solid #e5e7eb;">
+            <td align="center" style="padding: 40px 15px;">
+                <!--[if mso]>
+                <table align="center" width="600" cellpadding="0" cellspacing="0" border="0" style="width:600px;">
+                <tr>
+                <td>
+                <![endif]-->
+                <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; width: 100%; background-color: #ffffff;">
                     <!-- Header -->
                     <tr>
-                        <td style="background-color: #667eea; padding: 40px; text-align: center;">
-                            <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 700;">🎩 Magicians News</h1>
+                        <td style="background-color: #667eea; padding: 40px 30px; text-align: center;">
+                            <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 700; line-height: 1.2;">🎩 Magicians News</h1>
                         </td>
                     </tr>
                     <!-- Content -->
                     <tr>
-                        <td style="padding: 40px; background-color: #ffffff;">
-                            <p style="margin: 0 0 20px; font-size: 18px; color: #1f2937; font-weight: 600;">{$greeting}</p>
+                        <td style="padding: 40px 30px; background-color: #ffffff;">
+                            <p style="margin: 0 0 20px; font-size: 18px; color: #1f2937; font-weight: 600; line-height: 1.4;">{$greeting}</p>
                             <p style="margin: 0 0 30px; font-size: 16px; line-height: 1.6; color: #4b5563;">{$body}</p>
                             <!-- Button -->
                             <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
                                 <tr>
                                     <td align="center" style="padding: 20px 0;">
-                                        <a href="{$buttonUrl}" style="display: inline-block; background-color: #7c6ad6; color: #ffffff; text-decoration: none; padding: 16px 32px; font-size: 16px; font-weight: 700;">{$buttonText}</a>
+                                        <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+                                            <tr>
+                                                <td style="background-color: #7c6ad6; text-align: center;">
+                                                    <a href="{$buttonUrl}" style="display: block; background-color: #7c6ad6; color: #ffffff; text-decoration: none; padding: 16px 40px; font-size: 16px; font-weight: 700; line-height: 1.2;">{$buttonText}</a>
+                                                </td>
+                                            </tr>
+                                        </table>
                                     </td>
                                 </tr>
                             </table>
                             <p style="margin: 30px 0 0; font-size: 14px; line-height: 1.6; color: #6b7280;">{$footer}</p>
                             <!-- Manual link -->
-                            <p style="margin: 20px 0 0; font-size: 12px; color: #9ca3af;">
+                            <p style="margin: 20px 0 0; font-size: 12px; color: #9ca3af; line-height: 1.5;">
                                 Or copy and paste this link into your browser:<br>
-                                <a href="{$buttonUrl}" style="color: #667eea; word-break: break-all;">{$buttonUrl}</a>
+                                <a href="{$buttonUrl}" style="color: #667eea; word-break: break-all; text-decoration: underline;">{$buttonUrl}</a>
                             </p>
                         </td>
                     </tr>
                     <!-- Footer -->
                     <tr>
-                        <td style="background-color: #f9fafb; padding: 30px; text-align: center;">
-                            <p style="margin: 0; font-size: 14px; color: #6b7280;">
+                        <td style="background-color: #f9fafb; padding: 30px; text-align: center; border-top: 1px solid #e5e7eb;">
+                            <p style="margin: 0; font-size: 14px; color: #6b7280; line-height: 1.5;">
                                 Magicians News - Your Daily Dose of Magic<br>
                                 <a href="{$this->appUrl}" style="color: #667eea; text-decoration: none;">magicians.news</a>
                             </p>
                         </td>
                     </tr>
                 </table>
+                <!--[if mso]>
+                </td>
+                </tr>
+                </table>
+                <![endif]-->
             </td>
         </tr>
     </table>
