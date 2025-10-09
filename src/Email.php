@@ -12,7 +12,7 @@ class Email {
     public function __construct() {
         $this->fromEmail = $_ENV['EMAIL_FROM'] ?? 'noreply@magicians.news';
         $this->fromName = $_ENV['EMAIL_FROM_NAME'] ?? 'Magicians News';
-        $this->appUrl = $_ENV['APP_URL'] ?? 'https://magicians.news';
+        $this->appUrl = $_ENV['FRONTEND_URL'] ?? 'https://magicians.news';
     }
 
     /**
