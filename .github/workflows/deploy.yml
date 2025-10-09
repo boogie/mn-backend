@@ -53,9 +53,22 @@ jobs:
 
         # App
         APP_URL=${{ secrets.APP_URL }}
+        APP_ENV=${{ secrets.APP_ENV }}
         CORS_ORIGIN=${{ secrets.CORS_ORIGIN }}
-        BACKEND_URL=https://api.magicians.news
-        FRONTEND_URL=https://magicians.news
+        BACKEND_URL=${{ secrets.BACKEND_URL }}
+        FRONTEND_URL=${{ secrets.FRONTEND_URL }}
+        PHASE=${{ secrets.PHASE }}
+
+        # Email Configuration
+        EMAIL_ENABLED=${{ secrets.EMAIL_ENABLED }}
+        EMAIL_FROM=${{ secrets.EMAIL_FROM }}
+        EMAIL_FROM_NAME="${{ secrets.EMAIL_FROM_NAME }}"
+
+        # SMTP Configuration (AWS SES)
+        SMTP_HOST=${{ secrets.SMTP_HOST }}
+        SMTP_PORT=${{ secrets.SMTP_PORT }}
+        SMTP_USER=${{ secrets.SMTP_USER }}
+        SMTP_PASSWORD=${{ secrets.SMTP_PASSWORD }}
 
         # Google OAuth
         GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
