@@ -41,8 +41,9 @@ class Email {
     public function sendPasswordResetEmail(string $toEmail, string $name, string $token): bool {
         $resetUrl = $this->appUrl . '/reset-password?token=' . urlencode($token);
 
-        // Add token to subject to make each email unique (prevents Gmail threading/duplicate suppression)
-        $subject = "Reset your password [{$token}] - Magicians News";
+        // Add short token prefix to subject to make each email unique (prevents Gmail threading/duplicate suppression)
+        $tokenPrefix = substr($token, 0, 8);
+        $subject = "Reset your password [$tokenPrefix] - Magicians News";
 
         $html = $this->getEmailTemplate(
             'Reset Your Password',
