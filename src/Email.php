@@ -414,7 +414,7 @@ HTML;
                             <tr>
                                 <td style="padding: 40px 30px 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 16px; line-height: 24px; color: #4b5563;">
                                     <h2 style="margin: 0 0 20px 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 18px; line-height: 24px; color: #1f2937; font-weight: 600;">{$greeting}</h2>
-                                    <p style="margin: 0;">{$body}</p>
+                                    {$body}
                                 </td>
                             </tr>
                             <tr>
@@ -432,8 +432,8 @@ HTML;
                             </tr>
                             <tr>
                                 <td style="padding: 20px 30px 40px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 14px; line-height: 20px; color: #6b7280;">
-                                    <p style="margin: 0 0 15px;">{$footer}</p>
-                                    <p style="margin: 0; font-size: 12px; color: #9ca3af;">Or copy and paste this link into your browser:<br><a href="{$buttonUrl}" style="color: #667eea; text-decoration: underline; word-break: break-all;">{$buttonUrl}</a></p>
+                                    {$footer}<br><br>
+                                    <span style="font-size: 12px; color: #9ca3af;">Or copy and paste this link into your browser:<br><a href="{$buttonUrl}" style="color: #667eea; text-decoration: underline; word-break: break-all;">{$buttonUrl}</a></span>
                                 </td>
                             </tr>
                         </table>
