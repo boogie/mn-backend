@@ -25,11 +25,11 @@ if (isset($_GET['code'])) {
         $user = $stmt->fetch(\PDO::FETCH_ASSOC);
 
         if ($user) {
-            // Update existing user with Google ID if not set
+            // Update existing user with Google ID and mark as verified if not set
             if (!$user['google_id']) {
                 $stmt = $db->prepare("
                     UPDATE users
-                    SET google_id = ?, name = ?
+                    SET google_id = ?, name = ?, email_verified = 1
                     WHERE id = ?
                 ");
                 $stmt->execute([
@@ -40,10 +40,10 @@ if (isset($_GET['code'])) {
             }
             $userId = $user['id'];
         } else {
-            // Create new user
+            // Create new user (Google OAuth users are auto-verified)
             $stmt = $db->prepare("
-                INSERT INTO users (email, google_id, name, password_hash)
-                VALUES (?, ?, ?, NULL)
+                INSERT INTO users (email, google_id, name, password_hash, email_verified)
+                VALUES (?, ?, ?, NULL, 1)
             ");
             $stmt->execute([
                 $googleUser['email'],

@@ -48,18 +48,18 @@ if (isset($_GET['code'])) {
         );
 
         if ($user) {
-            // Update google_id if not set
+            // Update google_id and mark as verified if not set
             if (empty($user['google_id'])) {
                 $db->query(
-                    "UPDATE users SET google_id = ? WHERE id = ?",
+                    "UPDATE users SET google_id = ?, email_verified = 1 WHERE id = ?",
                     [$googleId, $user['id']]
                 );
             }
         } else {
-            // Create new user
+            // Create new user (Google OAuth users are auto-verified)
             $db->query(
-                "INSERT INTO users (email, name, google_id, subscription_status) VALUES (?, ?, ?, ?)",
-                [$email, $name, $googleId, 'free']
+                "INSERT INTO users (email, name, google_id, subscription_status, email_verified) VALUES (?, ?, ?, ?, ?)",
+                [$email, $name, $googleId, 'free', 1]
             );
 
             $userId = $db->getConnection()->lastInsertId();

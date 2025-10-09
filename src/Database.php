@@ -110,6 +110,34 @@ class Database {
             CREATE INDEX IF NOT EXISTS idx_newsletter_email ON newsletter(email)
         ");
 
+        // Create admin invite tokens table (Phase 0)
+        $this->connection->exec("
+            CREATE TABLE IF NOT EXISTS admin_invite_tokens (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                token TEXT UNIQUE NOT NULL,
+                created_by_admin INTEGER NOT NULL,
+                max_uses INTEGER DEFAULT 1,
+                current_uses INTEGER DEFAULT 0,
+                expires_at DATETIME,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (created_by_admin) REFERENCES users(id)
+            )
+        ");
+
+        // Create invite usage tracking table
+        $this->connection->exec("
+            CREATE TABLE IF NOT EXISTS invite_usage (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                inviter_user_id INTEGER,
+                admin_token_id INTEGER,
+                new_user_id INTEGER NOT NULL,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (inviter_user_id) REFERENCES users(id),
+                FOREIGN KEY (admin_token_id) REFERENCES admin_invite_tokens(id),
+                FOREIGN KEY (new_user_id) REFERENCES users(id)
+            )
+        ");
+
         // Migrate old schema if needed
         try {
             $columns = $this->connection->query("PRAGMA table_info(users)")->fetchAll();
@@ -158,6 +186,8 @@ class Database {
             // Migration 7: Add email verification fields
             if (!in_array('email_verified', $columnNames)) {
                 $this->connection->exec("ALTER TABLE users ADD COLUMN email_verified INTEGER DEFAULT 0");
+                // Mark all existing users as verified (they registered before this feature)
+                $this->connection->exec("UPDATE users SET email_verified = 1 WHERE email_verified = 0 OR email_verified IS NULL");
             }
             if (!in_array('email_verification_token', $columnNames)) {
                 $this->connection->exec("ALTER TABLE users ADD COLUMN email_verification_token TEXT");
@@ -169,6 +199,26 @@ class Database {
             }
             if (!in_array('password_reset_expires', $columnNames)) {
                 $this->connection->exec("ALTER TABLE users ADD COLUMN password_reset_expires DATETIME");
+            }
+
+            // Migration 9: Add invite system fields (Phase 0-1)
+            if (!in_array('invite_credits', $columnNames)) {
+                $this->connection->exec("ALTER TABLE users ADD COLUMN invite_credits INTEGER DEFAULT 3");
+            }
+            if (!in_array('invited_by_user_id', $columnNames)) {
+                $this->connection->exec("ALTER TABLE users ADD COLUMN invited_by_user_id INTEGER");
+            }
+            if (!in_array('invite_token', $columnNames)) {
+                $this->connection->exec("ALTER TABLE users ADD COLUMN invite_token TEXT");
+                $this->connection->exec("CREATE UNIQUE INDEX IF NOT EXISTS idx_users_invite_token ON users(invite_token) WHERE invite_token IS NOT NULL");
+            }
+            if (!in_array('is_active_member', $columnNames)) {
+                $this->connection->exec("ALTER TABLE users ADD COLUMN is_active_member INTEGER DEFAULT 0");
+            }
+
+            // Migration 10: Add shop referral field (Phase 2)
+            if (!in_array('registered_through_shop_id', $columnNames)) {
+                $this->connection->exec("ALTER TABLE users ADD COLUMN registered_through_shop_id INTEGER");
             }
 
         } catch (\Exception $e) {
