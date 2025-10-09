@@ -34,7 +34,18 @@ try {
                 Response::success($result, 'Login successful');
             } elseif ($action === 'forgot-password') {
                 try {
+                    // Check if headers already sent
+                    if (headers_sent($file, $line)) {
+                        error_log("Headers already sent in $file on line $line");
+                    }
+
                     $auth->requestPasswordReset($input['email'] ?? '');
+
+                    // Check again before response
+                    if (headers_sent($file, $line)) {
+                        error_log("Headers sent after requestPasswordReset in $file on line $line");
+                    }
+
                     Response::success(null, 'If an account exists with this email, a password reset link has been sent.');
                 } catch (\Exception $e) {
                     error_log("Password reset error: " . $e->getMessage() . "\nStack trace: " . $e->getTraceAsString());
