@@ -1,15 +1,31 @@
 <?php
 namespace MagicianNews;
 
+use Aws\Ses\SesClient;
+use Aws\Exception\AwsException;
+
 class Email {
     private string $fromEmail;
     private string $fromName;
     private string $appUrl;
+    private ?SesClient $sesClient = null;
 
     public function __construct() {
         $this->fromEmail = $_ENV['EMAIL_FROM'] ?? 'noreply@magicians.news';
         $this->fromName = $_ENV['EMAIL_FROM_NAME'] ?? 'Magicians News';
         $this->appUrl = $_ENV['APP_URL'] ?? 'https://magicians.news';
+
+        // Initialize AWS SES client if credentials are available
+        if (!empty($_ENV['AWS_ACCESS_KEY_ID']) && !empty($_ENV['AWS_SECRET_ACCESS_KEY'])) {
+            $this->sesClient = new SesClient([
+                'version' => 'latest',
+                'region' => $_ENV['AWS_REGION'] ?? 'eu-west-1',
+                'credentials' => [
+                    'key' => $_ENV['AWS_ACCESS_KEY_ID'],
+                    'secret' => $_ENV['AWS_SECRET_ACCESS_KEY'],
+                ],
+            ]);
+        }
     }
 
     /**
@@ -143,17 +159,9 @@ HTML;
     }
 
     /**
-     * Send email using PHP mail() function (fallback)
-     * In production, replace this with AWS SES
+     * Send email using AWS SES or fallback to logging in development
      */
     private function send(string $to, string $subject, string $html): bool {
-        $headers = [
-            'MIME-Version: 1.0',
-            'Content-type: text/html; charset=UTF-8',
-            "From: {$this->fromName} <{$this->fromEmail}>",
-            "Reply-To: {$this->fromEmail}",
-        ];
-
         try {
             // For development, just log the email instead of sending
             if ($_ENV['APP_ENV'] === 'development' || empty($_ENV['EMAIL_ENABLED'])) {
@@ -161,10 +169,56 @@ HTML;
                 return true;
             }
 
-            // In production, use mail() or AWS SES
+            // Use AWS SES in production
+            if ($this->sesClient !== null) {
+                return $this->sendViaSes($to, $subject, $html);
+            }
+
+            // Fallback to PHP mail() if SES is not configured
+            error_log("AWS SES not configured, falling back to mail()");
+            $headers = [
+                'MIME-Version: 1.0',
+                'Content-type: text/html; charset=UTF-8',
+                "From: {$this->fromName} <{$this->fromEmail}>",
+                "Reply-To: {$this->fromEmail}",
+            ];
             return mail($to, $subject, $html, implode("\r\n", $headers));
         } catch (\Exception $e) {
             error_log("Email send failed: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Send email via AWS SES
+     */
+    private function sendViaSes(string $to, string $subject, string $html): bool {
+        try {
+            $result = $this->sesClient->sendEmail([
+                'Source' => "{$this->fromName} <{$this->fromEmail}>",
+                'Destination' => [
+                    'ToAddresses' => [$to],
+                ],
+                'Message' => [
+                    'Subject' => [
+                        'Data' => $subject,
+                        'Charset' => 'UTF-8',
+                    ],
+                    'Body' => [
+                        'Html' => [
+                            'Data' => $html,
+                            'Charset' => 'UTF-8',
+                        ],
+                    ],
+                ],
+            ]);
+
+            // Log successful send with message ID
+            error_log("Email sent successfully via SES. MessageId: " . $result->get('MessageId'));
+            return true;
+
+        } catch (AwsException $e) {
+            error_log("AWS SES error: " . $e->getAwsErrorMessage());
             return false;
         }
     }
